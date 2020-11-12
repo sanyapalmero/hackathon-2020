@@ -161,4 +161,7 @@ dmypy.json
 .history
 .ionide
 
+node_modules/
+webpack-stats.json
+
 # End of https://www.toptal.com/developers/gitignore/api/django,visualstudiocode
