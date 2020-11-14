@@ -3,6 +3,8 @@ from django.contrib.auth import login
 from django.shortcuts import redirect, render
 from django.views import generic
 
+from assets.models import KindAsset
+
 from .forms import CustomLoginForm
 
 
@@ -20,6 +22,6 @@ class CustomLoginView(generic.View):
             if settings.LOGIN_REDIRECT_URL:
                 return redirect(settings.LOGIN_REDIRECT_URL)
             else:
-                return redirect("admin:index")
+                return redirect("assets:mpr-assets-list", kind_asset=KindAsset.NEW)
         else:
             return render(request, self.template_name, {"form": form})

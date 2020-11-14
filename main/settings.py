@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
+from django.urls.base import reverse_lazy
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,7 +53,9 @@ INSTALLED_APPS = [
 # Auth settings
 
 AUTH_USER_MODEL = "users.User"
-LOGIN_REDIRECT_URL = "admin:index"
+LOGIN_REDIRECT_URL = reverse_lazy(
+    "assets:mpr-assets-list", kwargs={"kind_asset": "new"}
+)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
