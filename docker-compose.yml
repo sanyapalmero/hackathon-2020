@@ -1,0 +1,38 @@
+version: '3'
+services:
+  frontend:
+    image: docker.pkg.github.com/sanyapalmero/hackathon-2020/frontend:latest
+    volumes:
+      - static:/app/static:ro
+      - ./media:/app/media:ro
+    restart: always
+    ports:
+      - '8080:80'
+  backend:
+    depends_on:
+      - db
+    image: docker.pkg.github.com/sanyapalmero/hackathon-2020/backend:latest
+    environment:
+      - POSTGRES_PASSWORD=h2020
+      - POSTGRES_USER=h2020
+      - POSTGRES_DB=h2020
+      - POSTGRES_HOST=db
+      - WORKERS=2
+      - DEBUG=0
+      - ALLOWED_HOST=domain.name
+    volumes:
+      - static:/app/staticroot:rw
+      - ./media:/app/media:rw
+    restart: always
+  db:
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=h2020
+      - POSTGRES_USER=h2020
+      - POSTGRES_DB=h2020
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
+volumes:
+  static: {}

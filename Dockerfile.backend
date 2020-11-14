@@ -1,0 +1,54 @@
+# This Dockerfile builds the backend image running gunicorn.
+# It also builds static files with webpack and stores them in the backend
+# image in /app/static. It is expected that the static files directory
+# will be mounted from the backend container into the frontend container.
+
+FROM node:14 AS node
+
+RUN mkdir /app
+WORKDIR /app
+
+# Install frontend dependencies
+COPY ./package.json .
+COPY ./package-lock.json .
+RUN npm ci
+
+# Build them
+COPY ./tsconfig.json .
+COPY ./webpack.config.js .
+COPY ./webpack-ext ./webpack-ext
+COPY ./static ./static
+RUN npm run build
+
+
+FROM python:3.8-alpine
+
+RUN mkdir /app
+WORKDIR /app
+
+# Install native dependencies
+RUN apk update && \
+    apk add build-base jpeg-dev libpng-dev linux-headers gettext postgresql-dev libxml2-dev libxslt-dev libffi-dev bash
+
+# Install gunicorn
+RUN pip install 'gunicorn==19.9.0'
+
+# Install python dependencies
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy app files
+COPY . .
+
+# Copy static files
+COPY --from=node /app/webpack-stats.json .
+COPY --from=node /app/static/dist ./static/dist
+RUN rm -rf ./static/ts ./static/scss
+VOLUME [ "/app/static" ]
+
+# Set up
+EXPOSE 80
+
+ENV WORKERS=4
+ENTRYPOINT [ "/app/docker/django-entrypoint.sh" ]
+CMD gunicorn -b 0.0.0.0:80 -w $WORKERS --forwarded-allow-ips="*" main.wsgi:application
