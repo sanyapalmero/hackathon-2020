@@ -9,6 +9,8 @@ from users.models import User
 
 
 class Asset(models.Model):
+    """Имущество"""
+
     class TypeAsset(models.TextChoices):
         MOVABLE = "movable", "Движимое"
         IMMOVABLE = "immovable", "Недвижимое"
@@ -100,6 +102,8 @@ def get_asset_photo_path(asset_photo, filename):
 
 
 class AssetPhoto(models.Model):
+    """Фото имущества"""
+
     asset = models.ForeignKey(
         "Asset", on_delete=models.CASCADE, verbose_name="имущество"
     )
@@ -117,6 +121,8 @@ class AssetPhoto(models.Model):
 
 
 class Resolution(models.Model):
+    """Решение о необходимости в имуществе"""
+
     class Kind(models.TextChoices):
         APPROVED = "approved", "Согласие"
         REFUSED = "refused", "Отказ"
