@@ -1,11 +1,17 @@
 from django.conf import settings
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect, render
+from django.urls.base import reverse
 from django.views import generic
 
 from assets.models import KindAsset
 
 from .forms import CustomLoginForm
+
+
+class HomeView(generic.RedirectView):
+    def get_redirect_url(self):
+        return reverse("assets:mpr-assets-list", kwargs={"kind_asset": KindAsset.NEW})
 
 
 class CustomLoginView(generic.View):
