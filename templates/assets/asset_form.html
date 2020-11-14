@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <!-- movable -->
+        <!-- immovable -->
+        <input type="hidden" name="type_asset" value="movable" id="id_type_asset">
+        {{ movable_form.as_p }}
+        <button type="submit">Сохранить</button>
+    </form>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <!-- movable -->
+        <!-- immovable -->
+        <input type="hidden" name="type_asset" value="immovable" id="id_type_asset">
+        {{ immovable_form.as_p }}
+        <button type="submit">Сохранить</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,7 +1,8 @@
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
 from django.views import generic
 
+from .forms import ImmovableAssetForm, MovableAssetForm
 from .models import Asset, AssetPhoto, KindAsset
 
 
@@ -70,3 +71,69 @@ class MPRConstAssetView(generic.View):
         return JsonResponse(
             {"status": "ok", "message": "asset #{} is const".format(asset_id)}
         )
+
+
+class AssetCreateView(generic.View):
+    template_name = "assets/asset_form.html"
+    movable_form_class = MovableAssetForm
+    immovable_form_class = ImmovableAssetForm
+
+    def movable_form_validate(self, request):
+        movable_form = self.movable_form_class(request.POST)
+        immovable_form = self.immovable_form_class()
+
+        if not movable_form.is_valid():
+            return render(
+                request,
+                self.template_name,
+                context={
+                    "movable_form": movable_form,
+                    "immovable_form": immovable_form,
+                },
+            )
+
+        return movable_form
+
+    def immovable_form_validate(self, request):
+        immovable_form = self.immovable_form_class(request.POST)
+        movable_form = self.movable_form_class()
+
+        if not immovable_form.is_valid():
+            return render(
+                request,
+                self.template_name,
+                context={
+                    "movable_form": movable_form,
+                    "immovable_form": immovable_form,
+                },
+            )
+
+        return immovable_form
+
+    def get(self, request):
+        movable_form = self.movable_form_class()
+        immovable_form = self.immovable_form_class()
+
+        return render(
+            request,
+            self.template_name,
+            context={"movable_form": movable_form, "immovable_form": immovable_form},
+        )
+
+    def post(self, request):
+        type_asset = request.POST.get("type_asset")
+
+        if type_asset == Asset.TypeAsset.MOVABLE.value:
+            result = self.movable_form_validate(request)
+
+        if type_asset == Asset.TypeAsset.IMMOVABLE.value:
+            result = self.immovable_form_validate(request)
+
+        if isinstance(result, HttpResponse):
+            return result
+
+        asset = result.save(commit=False)
+        asset.type_asset = type_asset
+        asset.save()
+
+        return redirect(asset)

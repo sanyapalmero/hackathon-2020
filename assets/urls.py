@@ -24,4 +24,5 @@ urlpatterns = [
         views.MPRConstAssetView.as_view(),
         name="mpr-asset-const",
     ),
+    path("asset-create/", views.AssetCreateView.as_view(), name="asset-create"),
 ]

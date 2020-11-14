@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.urls import reverse
 from django.utils import timezone
 
 from users.models import User
@@ -108,6 +109,9 @@ class Asset(models.Model):
     )
 
     objects = AssetQuerySet.as_manager()
+
+    def get_absolute_url(self):
+        return reverse("assets:asset-detail", kwargs={"pk": self.pk})
 
     @property
     def is_active(self):
