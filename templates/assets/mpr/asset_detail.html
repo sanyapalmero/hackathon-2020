@@ -109,8 +109,6 @@
     {% if asset.is_immovable and asset.address %}
         <div class="container">
             <div class="YandexMap" data-coordinates="{{ asset.coordinates }}"></div>
-            <script src="https://api-maps.yandex.ru/2.1/?apikey={{yandex_maps_api_key}}&lang=ru_RU"
-                type="text/javascript"></script>
         </div>
     {% endif %}
 

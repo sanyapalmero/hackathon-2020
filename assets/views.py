@@ -1,6 +1,5 @@
 import string
 
-from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
@@ -52,7 +51,6 @@ class AssetDetailView(generic.DetailView):
             context={
                 "asset": asset,
                 "photos": photos,
-                "yandex_maps_api_key": settings.YANDEX_MAPS_API_KEY,
             },
         )
 
