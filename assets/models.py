@@ -6,6 +6,8 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
+from users.models import User
+
 
 class KindAsset(models.TextChoices):
     NEW = "new", "Новые объявления"
@@ -149,3 +151,37 @@ class AssetPhoto(models.Model):
             "asset",
             "-created_at",
         )
+
+
+class Resolution(models.Model):
+    class Kind(models.TextChoices):
+        APPROVED = "approved", "Согласие"
+        REFUSED = "refused", "Отказ"
+
+    # Основные поля
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="ОГВ")
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE, verbose_name="Имущество")
+    kind = models.CharField(
+        max_length=settings.SHORT_LEN, choices=Kind.choices, verbose_name="Вид"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время")
+
+    # Поля, заполняемые при согласии
+    future_balance_holder = models.TextField(verbose_name="Будущий балансодержатель")
+    full_name_contact_person = models.CharField(
+        max_length=settings.LEN, verbose_name="ФИО контактного лица"
+    )
+    phone_contact_person = models.CharField(
+        max_length=settings.LEN, blank=True, verbose_name="Телефон контактного лица"
+    )
+    email_contact_person = models.EmailField(
+        max_length=settings.LEN, blank=True, verbose_name="Email контактного лица"
+    )
+
+    @property
+    def is_approved(self):
+        return self.kind == self.Kind.APPROVED
+
+    @property
+    def is_refused(self):
+        return self.kind == self.Kind.REFUSING
