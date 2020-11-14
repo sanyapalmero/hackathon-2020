@@ -30,4 +30,19 @@ urlpatterns = [
         views.AssetUpdateView.as_view(),
         name="asset-update",
     ),
+    path(
+        "import-xls/select-file/",
+        views.ImportXlsSelectFileView.as_view(),
+        name="import-xls-select-file",
+    ),
+    path(
+        "import-xls/match-columns/<int:pk>/",
+        views.ImportXlsMatchColumnsView.as_view(),
+        name="import-xls-match-columns",
+    ),
+    path(
+        "import-xls/preview/<int:pk>/",
+        views.ImportXlsPreviewView.as_view(),
+        name="import-xls-preview",
+    ),
 ]

@@ -12,8 +12,6 @@ from django.utils.functional import cached_property
 
 from users.models import User
 
-from users.models import User
-
 
 class KindAsset(models.TextChoices):
     NEW = "new", "Новые объявления"
@@ -248,3 +246,22 @@ class Resolution(models.Model):
     @property
     def is_refused(self):
         return self.kind == self.Kind.REFUSING
+
+
+class XlsImport(models.Model):
+    file = models.FileField(upload_to="xls-import")
+
+    skip_lines = models.IntegerField(default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class XlsImportColumnMatch(models.Model):
+    xls_import = models.ForeignKey(
+        XlsImport, on_delete=models.CASCADE, related_name="column_matches"
+    )
+
+    asset_attribute = models.CharField(max_length=settings.SHORT_LEN)
+
+    # 0-based
+    column_index = models.IntegerField(null=True)

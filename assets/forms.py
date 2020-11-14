@@ -1,6 +1,7 @@
 from django import forms
 
 from .models import Asset
+from .services.xlsimport import XlsAssetsFile, XlsImportError
 
 
 class MovableAssetForm(forms.ModelForm):
@@ -40,3 +41,19 @@ class ImmovableAssetForm(forms.ModelForm):
             "cadastral_number",
             "state_comment",
         )
+
+
+class ImportXlsSelectFileForm(forms.Form):
+    file = forms.FileField()
+
+    def clean_file(self):
+        file = self.cleaned_data["file"]
+        if not file:
+            return file
+
+        try:
+            self.xls_asset_file = XlsAssetsFile(file)
+        except XlsImportError as e:
+            raise forms.ValidationError(str(e))
+
+        return file
