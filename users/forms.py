@@ -4,7 +4,7 @@ from .models import User
 
 
 class CustomLoginForm(forms.Form):
-    username = forms.CharField(max_length=255, required=True)
+    email = forms.EmailField(max_length=255, required=True)
     password = forms.CharField(max_length=255, required=True)
 
     def __init__(self, *args, **kwargs):
@@ -15,9 +15,9 @@ class CustomLoginForm(forms.Form):
         if self.user:
             return self.user
 
-        username = self.cleaned_data.get("username")
+        email = self.cleaned_data.get("email")
         try:
-            self.user = User.objects.get(username=username)
+            self.user = User.objects.get(email=email)
             return self.user
         except User.DoesNotExist:
             raise forms.ValidationError("Неверное имя пользователя или пароль")
