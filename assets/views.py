@@ -2,13 +2,18 @@ import string
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.decorators import method_decorator
 from django.views import generic
+
+from users.decorators import role_required
+from users.models import User
 
 from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm
 from .models import Asset, AssetPhoto, KindAsset, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class MPRAssetsListView(generic.View):
     template_name = "assets/mpr/assets_list.html"
 
@@ -23,6 +28,7 @@ class MPRAssetsListView(generic.View):
         return render(request, self.template_name, context={"assets_qs": assets_qs})
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class AssetDetailView(generic.DetailView):
     mpr_template_name = "assets/mpr/asset_detail.html"
     ogv_template_name = "assets/ogv/asset_detail.html"
@@ -44,6 +50,7 @@ class AssetDetailView(generic.DetailView):
         )
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class MPRArchiveAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
@@ -60,6 +67,7 @@ class MPRArchiveAssetView(generic.View):
         )
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class MPRConstAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
@@ -76,6 +84,7 @@ class MPRConstAssetView(generic.View):
         )
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class AssetCreateView(generic.View):
     template_name = "assets/asset_form.html"
     movable_form_class = MovableAssetForm
@@ -142,6 +151,7 @@ class AssetCreateView(generic.View):
         return redirect(asset)
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class AssetUpdateView(generic.View):
     template_name = "assets/asset_form_update.html"
     movable_form_class = MovableAssetForm
@@ -175,6 +185,7 @@ class AssetUpdateView(generic.View):
         return redirect(asset)
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class ImportXlsSelectFileView(generic.FormView):
     template_name = "assets/import-xls/select-file.html"
     form_class = ImportXlsSelectFileForm
@@ -186,6 +197,7 @@ class ImportXlsSelectFileView(generic.FormView):
         return redirect("assets:import-xls-match-columns", pk=xls_import.pk)
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class ImportXlsMatchColumnsView(generic.View):
     template_name = "assets/import-xls/match-columns.html"
 
@@ -252,6 +264,7 @@ class ImportXlsMatchColumnsView(generic.View):
         return redirect("assets:import-xls-preview", pk=xls_import.pk)
 
 
+@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
 class ImportXlsPreviewView(generic.View):
     template_name = "assets/import-xls/preview.html"
 
