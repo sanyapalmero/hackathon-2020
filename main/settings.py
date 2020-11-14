@@ -45,6 +45,10 @@ INSTALLED_APPS = [
     "users",
 ]
 
+AUTH_USER_MODEL = "users.User"
+
+LOGIN_REDIRECT_URL = "admin:index"
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

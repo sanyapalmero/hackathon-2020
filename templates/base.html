@@ -8,10 +8,10 @@
 
     {% render_bundle 'main' 'css' %}
 
-    <title>Hackathon 2020</title>
+    <title></title>
 </head>
 <body>
-    <h1 class="Hackathon">Hackathon 2020</h1>
+    {% block content %}{% endblock %}
 
     {% render_bundle 'main' 'js' %}
 </body>

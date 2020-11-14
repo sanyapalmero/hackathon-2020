@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Авторизация</h1>
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <input type="text" name="username" value="{{ form.username.value|default:"" }}" placeholder="Юзернейм">
+        {% for error in form.username.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    <div>
+        <input type="password" name="password" value="{{ form.password.value|default:""  }}" placeholder="Пароль">
+        {% for error in form.password.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    <button type="submit">Войти</button>
+</form>
+{% endblock %}
