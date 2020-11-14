@@ -3,7 +3,34 @@ import os
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
+
+
+class KindAsset(models.TextChoices):
+    NEW = "new", "Новые объявления"
+    CONST = "const", "Постоянные объявления"
+    ARCHIVE = "archive", "Архивные объявления"
+
+
+class AssetQuerySet(models.QuerySet):
+    def new_assets(self):
+        query = (
+            Q(status=Asset.Status.ACTIVE)
+            & Q(expiration_date__isnull=False)
+            & Q(expiration_date__gt=timezone.now())
+        )
+        return self.filter(query)
+
+    def cost_assets(self):
+        query = Q(status=Asset.Status.ACTIVE) & (
+            Q(expiration_date__isnull=True) | Q(expiration_date__lte=timezone.now())
+        )
+        return self.filter(query)
+
+    def archive_assets(self):
+        query = Q(status=Asset.Status.ARCHIVED)
+        return self.filter(query)
 
 
 class Asset(models.Model):
@@ -75,6 +102,8 @@ class Asset(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name="дата и время добавления"
     )
+
+    objects = AssetQuerySet.as_manager()
 
     @property
     def is_active(self):
