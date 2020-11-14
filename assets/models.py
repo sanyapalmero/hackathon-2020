@@ -113,6 +113,14 @@ class Asset(models.Model):
     def is_archived(self):
         return self.status == self.Status.ARCHIVED
 
+    @property
+    def is_movable(self):
+        return self.type_asset == self.TypeAsset.MOVABLE
+
+    @property
+    def is_immovable(self):
+        return self.type_asset == self.TypeAsset.IMMOVABLE
+
     class Meta:
         ordering = ("-created_at",)
 

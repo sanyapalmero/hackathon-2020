@@ -11,4 +11,7 @@ urlpatterns = [
         views.MPRAssetsListView.as_view(),
         name="mpr-assets-list",
     ),
+    path(
+        "asset-detail/<int:pk>/", views.AssetDetailView.as_view(), name="asset-detail"
+    ),
 ]

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">Балансодержатель</div>
+            <div class="col">{{ asset.balance_holder }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">Наименование</div>
+            <div class="col">{{ asset.name }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">Вид</div>
+            <div class="col">{{ asset.get_type_asset_display }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">ФИО контактного лица</div>
+            <div class="col">{{ asset.full_name_contact_person }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">Телефон контактного лица</div>
+            <div class="col">{{ asset.phone_contact_person|default:'-' }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">Email контактного лица</div>
+            <div class="col">{{ asset.email_contact_person|default:'-' }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">Характеристика</div>
+            <div class="col">{{ asset.characteristic|default:'-' }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">Срок рассмотрения</div>
+            <div class="col">{{ asset.expiration_date|default:'-' }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">Статус</div>
+            <div class="col">{{ asset.status }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col">Дата и время добавления</div>
+            <div class="col">{{ asset.created_at }}</div>
+        </div>
+
+        {% if asset.is_immovable %}
+            <div class="row">
+                <div class="col">Адрес</div>
+                <div class="col">{{ asset.address|default:'-' }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col">Площадь</div>
+                <div class="col">{{ asset.square|default:'-' }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col">Кадастровый номер</div>
+                <div class="col">{{ asset.cadastral_number|default:'-' }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col">Состояние</div>
+                <div class="col">{{ asset.get_state_gisplay|default:'-' }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col">Комментарий к состоянию</div>
+                <div class="col">{{ asset.state_comment|default:'-' }}</div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <a href="#" class="btn btn-primary">Постоянное объявление</a>
+            </div>
+            <div class="col">
+                <a href="#" class="btn btn-primary">Архивировать</a>
+            </div>
+            <div class="col">
+                <a href="#" class="btn btn-primary">Редактировать</a>
+            </div>
+        </div>
+    </div>
+
+    {% if photos %}
+        <div class="container">
+            {% for photo in photos %}
+                <div class="row">
+                    <div class="col">
+                        <img src="{{ photo.photo.url }}" alt="">
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+{% endblock %}
