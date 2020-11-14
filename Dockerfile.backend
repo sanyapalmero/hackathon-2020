@@ -44,7 +44,7 @@ COPY . .
 COPY --from=node /app/webpack-stats.json .
 COPY --from=node /app/static/dist ./static/dist
 RUN rm -rf ./static/ts ./static/scss
-VOLUME [ "/app/static" ]
+VOLUME [ "/app/staticroot" ]
 
 # Set up
 EXPOSE 80
