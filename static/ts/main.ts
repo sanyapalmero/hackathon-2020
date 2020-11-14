@@ -3,6 +3,7 @@ import "../scss/main.scss";
 import $ from 'jquery';
 import 'bootstrap';
 
+
 // Local
 import ModalValue from './components/ModalValue';
 

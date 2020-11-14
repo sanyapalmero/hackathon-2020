@@ -1,11 +1,16 @@
 import hashlib
+import json
 import os
 
+import requests
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
+
+from users.models import User
 
 from users.models import User
 
@@ -128,6 +133,54 @@ class Asset(models.Model):
     @property
     def is_immovable(self):
         return self.type_asset == self.TypeAsset.IMMOVABLE
+
+    @cached_property
+    def coordinates(self):
+        """
+        Свойство получения координат по адресу
+        Возвращает список координат: [широта, долгота]
+        Если координаты не найдены, вернет пустой список.
+        https://yandex.ru/dev/maps/geocoder/doc/desc/concepts/input_params.html
+        """
+
+        url = "https://geocode-maps.yandex.ru/1.x/"
+        data = {
+            "geocode": self.address,
+            "apikey": settings.YANDEX_MAPS_API_KEY,
+            "format": "json",
+        }
+        response = requests.get(url=url, params=data)
+
+        if response.status_code == 200:
+            try:
+                response_json = json.loads(response.text)
+            except json.JSONDecodeError:
+                return []
+        else:
+            return []
+
+        def _find_value_by_key(key, node):
+            """
+            Рекурсивный метод поиска значения во вложенном словаре по указанному ключу
+            """
+            for k, v in node.items():
+                if k == key:
+                    yield v
+                elif isinstance(v, dict):
+                    for result in _find_value_by_key(key, v):
+                        yield result
+                elif isinstance(v, list):
+                    for d in v:
+                        for result in _find_value_by_key(key, d):
+                            yield result
+
+        coordinates_list = list(_find_value_by_key("pos", response_json))
+        if coordinates_list:
+            splitted_coordinates = coordinates_list[0].split(" ")
+            splitted_coordinates.reverse()
+            return splitted_coordinates
+        else:
+            return []
 
     class Meta:
         ordering = ("-created_at",)
