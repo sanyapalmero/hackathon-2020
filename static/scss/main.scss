@@ -3,3 +3,7 @@
 .Hackathon {
     color: rgb(255, 0, 85);
 }
+
+.custom-file-label::after {
+    content: "Загрузить";
+}
