@@ -23,7 +23,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
 
     ROLE_ADMIN = 'admin'
     ROLE_USER = 'user'
@@ -56,3 +56,7 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_admin
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
