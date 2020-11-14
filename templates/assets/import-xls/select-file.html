@@ -2,7 +2,10 @@
 
 {% block content %}
     <h1>Импорт Excel</h1>
-    <h3 class="text-muted mb-4">Выбор файла</h3>
+    <h3 class="text-muted mb-4">
+        Выбор файла
+        <span class="badge badge-pill badge-secondary float-right">1/3</span>
+    </h3>
 
     <form action="{% url 'assets:import-xls-select-file' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}

@@ -2,7 +2,10 @@
 
 {% block content %}
     <h1>Импорт Excel</h1>
-    <h3 class="text-muted mb-4">Настройка формата</h3>
+    <h3 class="text-muted mb-4">
+        Настройка формата
+        <span class="badge badge-pill badge-secondary float-right">2/3</span>
+    </h3>
 
     <form action="{% url 'assets:import-xls-match-columns' pk=xls_import.pk %}" method="post">
         {% csrf_token %}

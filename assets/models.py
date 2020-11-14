@@ -12,8 +12,6 @@ from django.utils.functional import cached_property
 
 from users.models import User
 
-from users.models import User
-
 
 class KindAsset(models.TextChoices):
     NEW = "new", "Новые объявления"
