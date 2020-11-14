@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.shortcuts import redirect, render
 from django.views import generic
 
@@ -25,3 +25,9 @@ class CustomLoginView(generic.View):
                 return redirect("assets:mpr-assets-list", kind_asset=KindAsset.NEW)
         else:
             return render(request, self.template_name, {"form": form})
+
+
+class LogoutView(generic.View):
+    def get(self, request):
+        logout(request)
+        return redirect("users:login")
