@@ -11,6 +11,8 @@
                 <th scope="col">Адрес</th>
                 <th scope="col">Состояние</th>
                 <th scope="col">Срок рассмотрения</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -23,8 +25,78 @@
                     <td>{{ asset.address|default:'-'}}</td>
                     <td>{{ asset.get_state_display|default:'-'}}</td>
                     <td>{{ asset.expiration_date|default:'-'}}</td>
+                    <td>
+                        <a
+                            class="btn btn-primary"
+                            href="#id_form_modal_archive"
+                            data-toggle="modal"
+                            data-whatever="{{ asset.id }}"
+                            data-field-id="#id_asset"
+                        >
+                            Архивировать
+                        </a>
+                    </td>
+                    <td>
+                        <a
+                            class="btn btn-primary"
+                            href="#id_form_modal_const"
+                            data-toggle="modal"
+                            data-whatever="{{ asset.id }}"
+                            data-field-id="#id_asset"
+                        >
+                            Постоянное объявление
+                        </a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="modal fade ModalValue" id="id_form_modal_archive">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтвердить действие</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите архивировать это имущество</p>
+                </div>
+                <div class="modal-footer">
+                    <form class="ModalForm" action="{% url 'assets:mpr-asset-archive' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="asset_id" id="id_asset">
+                        <button class="btn btn-danger" type="submit">Архивировать</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                </div>
+            </div> <!-- .modal-content -->
+        </div> <!-- .modal-dialog -->
+    </div> <!-- .modal -->
+
+    <div class="modal fade ModalValue" id="id_form_modal_const">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтвердить действие</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите сделать постоянным это имущество</p>
+                </div>
+                <div class="modal-footer">
+                    <form class="ModalForm" action="{% url 'assets:mpr-asset-const' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="asset_id" id="id_asset">
+                        <button class="btn btn-danger" type="submit">Да</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                </div>
+            </div> <!-- .modal-content -->
+        </div> <!-- .modal-dialog -->
+    </div> <!-- .modal -->
 {% endblock %}

@@ -14,4 +14,14 @@ urlpatterns = [
     path(
         "asset-detail/<int:pk>/", views.AssetDetailView.as_view(), name="asset-detail"
     ),
+    path(
+        "mpr-asset-archive/",
+        views.MPRArchiveAssetView.as_view(),
+        name="mpr-asset-archive",
+    ),
+    path(
+        "mpr-asset-const/",
+        views.MPRConstAssetView.as_view(),
+        name="mpr-asset-const",
+    ),
 ]

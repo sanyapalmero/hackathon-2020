@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import generic
 
@@ -36,4 +37,36 @@ class AssetDetailView(generic.DetailView):
 
         return render(
             request, self.template_name, context={"asset": asset, "photos": photos}
+        )
+
+
+class MPRArchiveAssetView(generic.View):
+    def post(self, request):
+        asset_id = request.POST.get("asset_id")
+
+        if not asset_id:
+            return JsonResponse({"status": "error", "message": "asset_id is invalid"})
+
+        asset = Asset.objects.get(pk=asset_id)
+        asset.status = Asset.Status.ARCHIVED
+        asset.save()
+
+        return JsonResponse(
+            {"status": "ok", "message": "asset #{} is archived".format(asset_id)}
+        )
+
+
+class MPRConstAssetView(generic.View):
+    def post(self, request):
+        asset_id = request.POST.get("asset_id")
+
+        if not asset_id:
+            return JsonResponse({"status": "error", "message": "asset_id is invalid"})
+
+        asset = Asset.objects.get(pk=asset_id)
+        asset.expiration_date = None
+        asset.save()
+
+        return JsonResponse(
+            {"status": "ok", "message": "asset #{} is const".format(asset_id)}
         )
