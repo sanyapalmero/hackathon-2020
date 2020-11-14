@@ -20,12 +20,12 @@ class CustomLoginForm(forms.Form):
             self.user = User.objects.get(username=username)
             return self.user
         except User.DoesNotExist:
-            raise forms.ValidationError('Неверное имя пользователя или пароль')
+            raise forms.ValidationError("Неверное имя пользователя или пароль")
 
     def clean_password(self):
-        password = self.cleaned_data['password']
+        password = self.cleaned_data["password"]
         user = self.get_user()
         if not user.check_password(password):
-            raise forms.ValidationError('Неверное имя пользователя или пароль')
+            raise forms.ValidationError("Неверное имя пользователя или пароль")
 
         return password
