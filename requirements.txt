@@ -4,6 +4,7 @@ django-webpack-loader==0.7.0
 flake8==3.8.4
 importlib-metadata==2.0.0
 mccabe==0.6.1
+Pillow==8.0.1
 psycopg2==2.8.6
 pycodestyle==2.6.0
 pyflakes==2.2.0
