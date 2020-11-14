@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "webpack_loader",
     # Local apps
     "users",
+    "assets",
 ]
 
 AUTH_USER_MODEL = "users.User"
