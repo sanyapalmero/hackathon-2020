@@ -25,4 +25,9 @@ urlpatterns = [
         name="mpr-asset-const",
     ),
     path("asset-create/", views.AssetCreateView.as_view(), name="asset-create"),
+    path(
+        "asset-detail/<int:pk>/update/",
+        views.AssetUpdateView.as_view(),
+        name="asset-update",
+    ),
 ]
