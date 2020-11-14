@@ -12,8 +12,12 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None):
-        user = self.model(email=self.normalize_email(email), role=User.ROLE_ADMIN)
+    def create_superuser(self, email, password=None, **kwargs):
+        user = self.model(
+            email=self.normalize_email(email),
+            role=User.ROLE_ADMIN,
+            **kwargs,
+        )
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -21,6 +25,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
 
     ROLE_ADMIN = "admin"
     ROLE_USER = "user"
