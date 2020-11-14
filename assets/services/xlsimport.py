@@ -1,3 +1,4 @@
+import decimal
 from decimal import Decimal
 from typing import Any, Dict, Iterator, List, Tuple
 
@@ -95,7 +96,10 @@ class SubstringMatcher(Importer):
 
 class DecimalImporter(Importer):
     def translate_value(self, xls_value: Any) -> str:
-        return round(Decimal(xls_value), 1)
+        try:
+            return round(Decimal(xls_value), 1)
+        except decimal.InvalidOperation:
+            return Decimal("0")
 
 
 ATTRIBUTE_IMPORTERS = {
@@ -103,8 +107,8 @@ ATTRIBUTE_IMPORTERS = {
     "name": TextImporter(),
     "type_asset": SubstringMatcher(
         {
-            "движимое": Asset.TypeAsset.MOVABLE,
-            "недвижимое": Asset.TypeAsset.IMMOVABLE,
+            "недв": Asset.TypeAsset.IMMOVABLE,
+            "дв": Asset.TypeAsset.MOVABLE,
         },
         default=Asset.TypeAsset.IMMOVABLE,
     ),

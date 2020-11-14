@@ -2,14 +2,13 @@
 
 {% block content %}
     <h1>Импорт Excel</h1>
+    <h3 class="text-muted mb-4">Настройка формата</h3>
 
     <form action="{% url 'assets:import-xls-match-columns' pk=xls_import.pk %}" method="post">
         {% csrf_token %}
 
-        <p>Укажите количество заголовочных строк в файле:</p>
-
         <div class="form-group">
-            <label for="id_skip_lines">Пропустить первые ... строк</label>
+            <label for="id_skip_lines">Укажите количество заголовочных строк в файле:</label>
             <input
                 type="number"
                 name="skip_lines"
@@ -17,6 +16,9 @@
                 value="{{ skip_lines }}"
                 class="form-control"
             >
+            <p class="text-muted">
+                Заголовочные строки будут пропущены при загрузке.
+            </p>
         </div>
 
         <p>Выберите, какие поля объявления относятся к какой колонке файла:</p>
