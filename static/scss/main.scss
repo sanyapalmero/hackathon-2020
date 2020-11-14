@@ -1,8 +1,7 @@
 @import "./bootstrap";
 
-.Hackathon {
-    color: rgb(255, 0, 85);
-}
+@import "./components/YandexMap.scss";
+
 
 .custom-file-label::after {
     content: "Загрузить";

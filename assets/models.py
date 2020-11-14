@@ -136,8 +136,8 @@ class Asset(models.Model):
     def coordinates(self):
         """
         Свойство получения координат по адресу
-        Возвращает список координат: [широта, долгота]
-        Если координаты не найдены, вернет пустой список.
+        Возвращает строку координат: "широта долгота"
+        Если координаты не найдены, вернет None.
         https://yandex.ru/dev/maps/geocoder/doc/desc/concepts/input_params.html
         """
 
@@ -153,9 +153,9 @@ class Asset(models.Model):
             try:
                 response_json = json.loads(response.text)
             except json.JSONDecodeError:
-                return []
+                return None
         else:
-            return []
+            return None
 
         def _find_value_by_key(key, node):
             """
@@ -176,9 +176,9 @@ class Asset(models.Model):
         if coordinates_list:
             splitted_coordinates = coordinates_list[0].split(" ")
             splitted_coordinates.reverse()
-            return splitted_coordinates
+            return " ".join(splitted_coordinates)
         else:
-            return []
+            return None
 
     class Meta:
         ordering = ("-created_at",)
