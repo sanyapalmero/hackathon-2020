@@ -25,4 +25,19 @@ urlpatterns = [
         name="mpr-asset-const",
     ),
     path("asset-create/", views.AssetCreateView.as_view(), name="asset-create"),
+    path(
+        "import-xls/select-file/",
+        views.ImportXlsSelectFileView.as_view(),
+        name="import-xls-select-file",
+    ),
+    path(
+        "import-xls/match-columns/<int:pk>/",
+        views.ImportXlsMatchColumnsView.as_view(),
+        name="import-xls-match-columns",
+    ),
+    path(
+        "import-xls/preview/<int:pk>/",
+        views.ImportXlsPreviewView.as_view(),
+        name="import-xls-preview",
+    ),
 ]

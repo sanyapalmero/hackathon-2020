@@ -1,9 +1,12 @@
+import string
+
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
 
-from .forms import ImmovableAssetForm, MovableAssetForm
-from .models import Asset, AssetPhoto, KindAsset
+from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm
+from .models import Asset, AssetPhoto, KindAsset, XlsImport, XlsImportColumnMatch
+from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
 class MPRAssetsListView(generic.View):
@@ -137,3 +140,130 @@ class AssetCreateView(generic.View):
         asset.save()
 
         return redirect(asset)
+
+
+class ImportXlsSelectFileView(generic.FormView):
+    template_name = "assets/import-xls/select-file.html"
+    form_class = ImportXlsSelectFileForm
+
+    def form_valid(self, form):
+        xls_import = XlsImport.objects.create(
+            file=form.cleaned_data["file"],
+        )
+        return redirect("assets:import-xls-match-columns", pk=xls_import.pk)
+
+
+class ImportXlsMatchColumnsView(generic.View):
+    template_name = "assets/import-xls/match-columns.html"
+
+    def get(self, request, pk):
+        xls_import = get_object_or_404(XlsImport, pk=pk)
+        xls_asset_file = XlsAssetsFile(xls_import.file)
+
+        column_choices = [(-1, "Нет")]
+        for i in range(xls_asset_file.count_columns()):
+            column_choices.append((i, string.ascii_uppercase[i]))
+
+        attribute_contexts = []
+        for attr_name, verbose_name in list_importable_attributes():
+            try:
+                selected_column = xls_import.column_matches.get(
+                    asset_attribute=attr_name
+                ).column_index
+            except XlsImportColumnMatch.DoesNotExist:
+                selected_column = -1
+
+            attribute_contexts.append(
+                {
+                    "selected_column": selected_column,
+                    "asset_attribute": attr_name,
+                    "verbose_name": verbose_name,
+                }
+            )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "xls_import": xls_import,
+                "skip_lines": xls_import.skip_lines,
+                "column_choices": column_choices,
+                "attributes": attribute_contexts,
+            },
+        )
+
+    def post(self, request, pk):
+        xls_import = get_object_or_404(XlsImport, pk=pk)
+
+        try:
+            xls_import.skip_lines = int(request.POST["skip_lines"])
+        except (KeyError, ValueError, TypeError):
+            xls_import.skip_lines = 0
+
+        xls_import.save()
+
+        for attr_name, verbose_name in list_importable_attributes():
+            try:
+                selected_column = int(request.POST[attr_name])
+                if selected_column < 0:
+                    selected_column = None
+            except (KeyError, ValueError, TypeError):
+                selected_column = None
+
+            column_match, created = xls_import.column_matches.get_or_create(
+                asset_attribute=attr_name
+            )
+            column_match.column_index = selected_column
+            column_match.save()
+
+        return redirect("assets:import-xls-preview", pk=xls_import.pk)
+
+
+class ImportXlsPreviewView(generic.View):
+    template_name = "assets/import-xls/preview.html"
+
+    def get(self, request, pk):
+        xls_import = get_object_or_404(XlsImport, pk=pk)
+        xls_asset_file = XlsAssetsFile(xls_import.file)
+
+        assets = xls_asset_file.import_assets(
+            xls_import.skip_lines, list(xls_import.column_matches.all())
+        )
+
+        preview_headers = []
+        for attr_name, verbose_name in list_importable_attributes():
+            preview_headers.append(verbose_name.capitalize())
+
+        preview_rows = []
+        for asset in assets:
+            row = []
+            for attr_name, verbose_name in list_importable_attributes():
+                if hasattr(asset, f"get_{attr_name}_display"):
+                    get_display = getattr(asset, f"get_{attr_name}_display")
+                    row.append(get_display())
+                else:
+                    row.append(getattr(asset, attr_name) or "")
+            preview_rows.append(row)
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "xls_import": xls_import,
+                "preview_headers": preview_headers,
+                "preview_rows": preview_rows,
+            },
+        )
+
+    def post(self, request, pk):
+        xls_import = get_object_or_404(XlsImport, pk=pk)
+        xls_asset_file = XlsAssetsFile(xls_import.file)
+
+        assets = xls_asset_file.import_assets(
+            xls_import.skip_lines, list(xls_import.column_matches.all())
+        )
+
+        for asset in assets:
+            asset.save()
+
+        return redirect("assets:import-xls-select-file")

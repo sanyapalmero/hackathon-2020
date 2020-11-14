@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Импорт Excel</h1>
+
+    <form action="{% url 'assets:import-xls-match-columns' pk=xls_import.pk %}" method="post">
+        {% csrf_token %}
+
+        <p>Укажите количество заголовочных строк в файле:</p>
+
+        <div class="form-group">
+            <label for="id_skip_lines">Пропустить первые ... строк</label>
+            <input
+                type="number"
+                name="skip_lines"
+                id="id_skip_lines"
+                value="{{ skip_lines }}"
+                class="form-control"
+            >
+        </div>
+
+        <p>Выберите, какие поля объявления относятся к какой колонке файла:</p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Поле</th>
+                    <th>Выберите колонку</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attr in attributes %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ attr.verbose_name|capfirst }}</td>
+                        <td>
+                            <select name="{{ attr.asset_attribute }}" class="form-control">
+                                {% for value, display in column_choices %}
+                                    <option value="{{ value }}" {% if value == attr.selected_column %}selected{% endif %}>
+                                        {{ display }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary">Загрузить</button>
+    </form>
+{% endblock %}

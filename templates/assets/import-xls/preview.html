@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Импорт Excel</h1>
+
+    <p>Пожалуйста, проверьте правильность загрузки в таблице ниже</p>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    {% for header in preview_headers %}
+                        <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in preview_rows %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        {% for value in row %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <form action="{% url 'assets:import-xls-preview' pk=xls_import.pk %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-primary">Подтвердить</button>
+        <a href="javascript:history.back();" class="btn btn-secondary">Назад</a>
+        <a href="javascript:history.back();" class="btn btn-secondary">Отмена</a>
+    </form>
+{% endblock %}
