@@ -48,8 +48,9 @@ INSTALLED_APPS = [
     "assets",
 ]
 
-AUTH_USER_MODEL = "users.User"
+# Auth settings
 
+AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "admin:index"
 
 MIDDLEWARE = [
@@ -99,8 +100,14 @@ DATABASES = {
     }
 }
 
-LEN = 255
-SHORT_LEN = 127
+# Model fields settings
+
+LEN = 255  # max_length=255
+SHORT_LEN = 127  # max_length=127
+
+
+# Yandex maps API
+YANDEX_MAPS_API_KEY = ""
 
 
 # Password validation
