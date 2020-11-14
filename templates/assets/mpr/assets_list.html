@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <div class="YandexMap" data-assets="{{ assets_json }}"></div>
+
     <a href="{% url 'assets:import-xls-select-file' %}" class="btn btn-secondary">Импорт Excel</a>
 
     <table class="table">

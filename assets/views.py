@@ -1,3 +1,4 @@
+import json
 import string
 
 from django.http import HttpResponse, JsonResponse
@@ -25,7 +26,14 @@ class MPRAssetsListView(generic.View):
         if kind_asset == KindAsset.ARCHIVE.value:
             assets_qs = Asset.objects.archive_assets()
 
-        return render(request, self.template_name, context={"assets_qs": assets_qs})
+        assets_dicts_list = [asset.as_dict() for asset in assets_qs]
+        assets_json = json.dumps(assets_dicts_list, ensure_ascii=False)
+
+        return render(
+            request,
+            self.template_name,
+            context={"assets_qs": assets_qs, "assets_json": assets_json},
+        )
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")

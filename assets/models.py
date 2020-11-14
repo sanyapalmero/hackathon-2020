@@ -116,6 +116,36 @@ class Asset(models.Model):
     def get_absolute_url(self):
         return reverse("assets:asset-detail", kwargs={"pk": self.pk})
 
+    def as_dict(self):
+        expiration_date = self.expiration_date.strftime("%m.%d.%Y %H:%M:%S")
+        created_at = self.created_at.strftime("%m.%d.%Y %H:%M:%S")
+
+        asset_info = f"<div>Балансодержатель: {self.balance_holder}</div>"
+        asset_info += f"<div>Наименование: {self.name}</div>"
+        asset_info += f"<div>Вид: {self.get_type_asset_display()}</div>"
+        asset_info += (
+            f"<div>ФИО контактного лица: {self.full_name_contact_person}</div>"
+        )
+        asset_info += (
+            f"<div>Телефон контактного лица: {self.phone_contact_person}</div>"
+        )
+        asset_info += f"<div>Email контактного лица: {self.email_contact_person}</div>"
+        asset_info += f"<div>Характеристика: {self.characteristic}</div>"
+        asset_info += f"<div>Срок рассмотрения: {expiration_date}</div>"
+        asset_info += f"<div>Статус: {self.get_status_display()}</div>"
+        asset_info += f"<div>Местонахождение: {self.address}</div>"
+        asset_info += f"<div>Площадь: {self.square}</div>"
+        asset_info += f"<div>Кадастровый номер: {self.cadastral_number}</div>"
+        asset_info += f"<div>Состояние: {self.get_state_display()}</div>"
+        asset_info += f"<div>Комментарий к состоянию: {self.state_comment}</div>"
+        asset_info += f"<div>Дата и время добавления: {created_at}</div>"
+        asset_info += f"<div>Ссылка: {self.get_absolute_url()}</div>"
+
+        return {
+            "asset_info": asset_info,
+            "coordinates": self.coordinates,
+        }
+
     @property
     def is_active(self):
         return self.status == self.Status.ACTIVE
