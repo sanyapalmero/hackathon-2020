@@ -23,7 +23,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
 
     ROLE_ADMIN = 'admin'
     ROLE_USER = 'user'
