@@ -22,12 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "er@ir3+d#6&z#!7u^2=mns9i#0=dwyhuiv0snojj^m+c(nc9p-"
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "er@ir3+d#6&z#!7u^2=mns9i#0=dwyhuiv0snojj^m+c(nc9p-"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "1") == "1"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.getenv("ALLOWED_HOST", "127.0.0.1")]
 
 
 # Application definition
@@ -46,8 +48,9 @@ INSTALLED_APPS = [
     "assets",
 ]
 
-AUTH_USER_MODEL = "users.User"
+# Auth settings
 
+AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "admin:index"
 
 MIDDLEWARE = [
@@ -96,6 +99,15 @@ DATABASES = {
         "PORT": os.getenv("POSTGRES_PORT", ""),
     }
 }
+
+# Model fields settings
+
+LEN = 255  # max_length=255
+SHORT_LEN = 127  # max_length=127
+
+
+# Yandex maps API
+YANDEX_MAPS_API_KEY = ""
 
 
 # Password validation

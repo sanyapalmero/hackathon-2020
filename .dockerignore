@@ -1,0 +1,15 @@
+.dockerignore
+.gitignore
+.git
+venv
+env
+*.sqlite3
+media
+node_modules
+Dockerfile.*
+webpack-stats.json
+main/local_settings.py
+static/dist
+fabfile.py
+.vscode
+.idea

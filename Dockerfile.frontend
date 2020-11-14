@@ -1,0 +1,12 @@
+# This Dockerfile build the frontend image running nginx which is used
+# to serve static and media files and to proxy requests to the backend.
+
+FROM nginx:stable-alpine
+
+RUN mkdir /app
+WORKDIR /app
+
+VOLUME [ "/app/static" ]
+VOLUME [ "/app/media" ]
+
+COPY ./docker/nginx.conf /etc/nginx/nginx.conf
