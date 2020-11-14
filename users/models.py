@@ -13,24 +13,18 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None):
-        user = self.model(
-            email=self.normalize_email(email),
-            role=User.ROLE_ADMIN
-        )
+        user = self.model(email=self.normalize_email(email), role=User.ROLE_ADMIN)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
 
 class User(AbstractBaseUser):
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = "username"
 
-    ROLE_ADMIN = 'admin'
-    ROLE_USER = 'user'
-    ROLE_CHOICES = [
-        (ROLE_ADMIN, "Администратор"),
-        (ROLE_USER, "Пользователь")
-    ]
+    ROLE_ADMIN = "admin"
+    ROLE_USER = "user"
+    ROLE_CHOICES = [(ROLE_ADMIN, "Администратор"), (ROLE_USER, "Пользователь")]
 
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(unique=True, max_length=255, verbose_name="Email")
@@ -58,5 +52,5 @@ class User(AbstractBaseUser):
         return self.is_admin
 
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"

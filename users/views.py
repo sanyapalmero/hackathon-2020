@@ -1,14 +1,13 @@
+from django.conf import settings
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
 from django.views import generic
-
-from django.conf import settings
 
 from .forms import CustomLoginForm
 
 
 class CustomLoginView(generic.View):
-    template_name = 'users/login.html'
+    template_name = "users/login.html"
 
     def get(self, request):
         return render(request, self.template_name)

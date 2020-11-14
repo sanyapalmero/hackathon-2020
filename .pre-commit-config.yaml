@@ -1,0 +1,20 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+        - id: check-case-conflict
+        - id: check-merge-conflict
+        - id: debug-statements
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.3  # pick a git hash / tag to point to
+    hooks:
+        - id: flake8
+  - repo: https://github.com/psf/black
+    rev: 20.8b1
+    hooks:
+      - id: black
+        language_version: python3.8
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.6.4
+    hooks:
+      - id: isort
