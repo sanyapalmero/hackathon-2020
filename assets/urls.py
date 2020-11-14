@@ -26,6 +26,11 @@ urlpatterns = [
     ),
     path("asset-create/", views.AssetCreateView.as_view(), name="asset-create"),
     path(
+        "asset-detail/<int:pk>/update/",
+        views.AssetUpdateView.as_view(),
+        name="asset-update",
+    ),
+    path(
         "import-xls/select-file/",
         views.ImportXlsSelectFileView.as_view(),
         name="import-xls-select-file",

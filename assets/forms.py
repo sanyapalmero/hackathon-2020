@@ -19,9 +19,11 @@ class MovableAssetForm(forms.ModelForm):
 
 
 class ImmovableAssetForm(forms.ModelForm):
-    address = forms.CharField()
-    square = forms.DecimalField()
-    state = forms.ChoiceField(choices=Asset.State.choices)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["address"].required = True
+        self.fields["square"].required = True
+        self.fields["state"].required = True
 
     class Meta:
         model = Asset
@@ -33,6 +35,9 @@ class ImmovableAssetForm(forms.ModelForm):
             "email_contact_person",
             "characteristic",
             "expiration_date",
+            "address",
+            "square",
+            "state",
             "cadastral_number",
             "state_comment",
         )

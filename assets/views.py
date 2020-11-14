@@ -142,6 +142,39 @@ class AssetCreateView(generic.View):
         return redirect(asset)
 
 
+class AssetUpdateView(generic.View):
+    template_name = "assets/asset_form_update.html"
+    movable_form_class = MovableAssetForm
+    immovable_form_class = ImmovableAssetForm
+
+    def get(self, request, pk):
+        asset = get_object_or_404(Asset, id=pk)
+
+        if asset.type_asset == Asset.TypeAsset.MOVABLE.value:
+            form = self.movable_form_class(instance=asset)
+
+        if asset.type_asset == Asset.TypeAsset.IMMOVABLE.value:
+            form = self.immovable_form_class(instance=asset)
+
+        return render(request, self.template_name, context={"form": form})
+
+    def post(self, request, pk):
+        asset = get_object_or_404(Asset, id=pk)
+
+        if asset.type_asset == Asset.TypeAsset.MOVABLE.value:
+            form = self.movable_form_class(request.POST, instance=asset)
+
+        if asset.type_asset == Asset.TypeAsset.IMMOVABLE.value:
+            form = self.immovable_form_class(request.POST, instance=asset)
+
+        if not form.is_valid():
+            return render(request, self.template_name, context={"form": form})
+
+        asset = form.save()
+
+        return redirect(asset)
+
+
 class ImportXlsSelectFileView(generic.FormView):
     template_name = "assets/import-xls/select-file.html"
     form_class = ImportXlsSelectFileForm
