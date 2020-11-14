@@ -19,7 +19,7 @@ export default class YandexMap {
                 map.geoObjects.add(
                     new window.ymaps.Placemark([latitude, longitude], {}, {
                         preset: 'islands#greenDotIconWithCaption',
-                        iconColor: 'red'
+                        iconColor: '#e95420'
                     })
                 )
             });
