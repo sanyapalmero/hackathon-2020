@@ -9,6 +9,7 @@ urlpatterns = [
     path("admin/login/", RedirectView.as_view(pattern_name="users:login")),
     path("admin/", admin.site.urls),
     path("users/", include("users.urls")),
+    path("assets/", include("assets.urls")),
 ]
 
 if settings.DEBUG:

@@ -5,10 +5,40 @@ import os
 import requests
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 
 from users.models import User
+
+from users.models import User
+
+
+class KindAsset(models.TextChoices):
+    NEW = "new", "Новые объявления"
+    CONST = "const", "Постоянные объявления"
+    ARCHIVE = "archive", "Архивные объявления"
+
+
+class AssetQuerySet(models.QuerySet):
+    def new_assets(self):
+        query = (
+            Q(status=Asset.Status.ACTIVE)
+            & Q(expiration_date__isnull=False)
+            & Q(expiration_date__gt=timezone.now())
+        )
+        return self.filter(query)
+
+    def cost_assets(self):
+        query = Q(status=Asset.Status.ACTIVE) & (
+            Q(expiration_date__isnull=True) | Q(expiration_date__lte=timezone.now())
+        )
+        return self.filter(query)
+
+    def archive_assets(self):
+        query = Q(status=Asset.Status.ARCHIVED)
+        return self.filter(query)
 
 
 class Asset(models.Model):
@@ -83,6 +113,11 @@ class Asset(models.Model):
         auto_now_add=True, verbose_name="дата и время добавления"
     )
 
+    objects = AssetQuerySet.as_manager()
+
+    def get_absolute_url(self):
+        return reverse("assets:asset-detail", kwargs={"pk": self.pk})
+
     @property
     def is_active(self):
         return self.status == self.Status.ACTIVE
@@ -90,6 +125,14 @@ class Asset(models.Model):
     @property
     def is_archived(self):
         return self.status == self.Status.ARCHIVED
+
+    @property
+    def is_movable(self):
+        return self.type_asset == self.TypeAsset.MOVABLE
+
+    @property
+    def is_immovable(self):
+        return self.type_asset == self.TypeAsset.IMMOVABLE
 
     @cached_property
     def coordinates(self):
