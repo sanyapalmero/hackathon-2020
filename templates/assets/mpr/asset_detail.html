@@ -3,181 +3,164 @@
 {% block title %}{{ asset.name }}{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col">Балансодержатель</div>
-            <div class="col">{{ asset.balance_holder }}</div>
+  <h1>{{ asset.name }}</h1>
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="table-responsive">
+        <table class="table">
+          <tbody>
+          <tr>
+            <th>Балансодержатель</th>
+            <td>{{ asset.balance_holder }}</td>
+          </tr>
+          <tr>
+            <th>Вид</th>
+            <td>{{ asset.get_type_asset_display }}</td>
+          </tr>
+          <tr>
+            <th>Контактное лицо</th>
+            <td>
+              {{ asset.full_name_contact_person }}<br>
+              {% if asset.phone_contact_person %}
+                {{ asset.phone_contact_person }}<br>
+              {% endif %}
+              {% if asset.email_contact_person %}
+                {{ email_contact_person }}<br>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th>Срок рассмотрения</th>
+            <td>{{ asset.expiration_date|default:'-' }}</td>
+          </tr>
+          <tr>
+            <th>Статус</th>
+            <td>{{ asset.get_status_display }}</td>
+          </tr>
+          <tr>
+            <th>Дата и время добавления</th>
+            <td>{{ asset.created_at }}</td>
+          </tr>
+          {% if asset.is_immovable %}
+            <tr>
+              <th>Адрес</th>
+              <td>{{ asset.address|default:'-' }}</td>
+            </tr>
+            <tr>
+              <th>Площадь</th>
+              <td>{{ asset.square|default:'-' }}</td>
+            </tr>
+            <tr>
+              <th>Кадастровый номер</th>
+              <td>{{ asset.cadastral_number|default:'-' }}</td>
+            </tr>
+            <tr>
+              <th>Состояние</th>
+              <td>{{ asset.get_state_display|default:'-' }}</td>
+            </tr>
+            <tr>
+              <th>Комментарий к состоянию</th>
+              <td>{{ asset.state_comment|default:'-' }}</td>
+            </tr>
+          {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          {% if asset.is_new %}
+            <form action="{% url 'assets:asset-archive' %}" class="mr-5 d-inline-block" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="asset_id" value="{{ asset.id }}">
+              <input type="hidden" name="back" value="{{ request.path }}">
+              <button class="btn btn-primary" type="submit">Постоянное объявление</button>
+            </form>
+          {% endif %}
+          {% if not asset.is_archived %}
+            <form action="{% url 'assets:asset-archive' %}" class="mr-5 d-inline-block" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="asset_id" value="{{ asset.id }}">
+              <input type="hidden" name="back" value="{{ request.path }}">
+              <button class="btn btn-primary" type="submit">Архивировать</button>
+            </form>
+          {% endif %}
+          <a href="{% url 'assets:asset-update' asset.id %}" class="btn btn-primary">Редактировать</a>
         </div>
-
-        <div class="row">
-            <div class="col">Наименование</div>
-            <div class="col">{{ asset.name }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col">Вид</div>
-            <div class="col">{{ asset.get_type_asset_display }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col">ФИО контактного лица</div>
-            <div class="col">{{ asset.full_name_contact_person }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col">Телефон контактного лица</div>
-            <div class="col">{{ asset.phone_contact_person|default:'-' }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col">Email контактного лица</div>
-            <div class="col">{{ asset.email_contact_person|default:'-' }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col">Характеристика</div>
-            <div class="col">{{ asset.characteristic|default:'-' }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col">Срок рассмотрения</div>
-            <div class="col">{{ asset.expiration_date|default:'-' }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col">Статус</div>
-            <div class="col">{{ asset.get_status_display }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col">Дата и время добавления</div>
-            <div class="col">{{ asset.created_at }}</div>
-        </div>
-
-        {% if asset.is_immovable %}
-            <div class="row">
-                <div class="col">Адрес</div>
-                <div class="col">{{ asset.address|default:'-' }}</div>
-            </div>
-
-            <div class="row">
-                <div class="col">Площадь</div>
-                <div class="col">{{ asset.square|default:'-' }}</div>
-            </div>
-
-            <div class="row">
-                <div class="col">Кадастровый номер</div>
-                <div class="col">{{ asset.cadastral_number|default:'-' }}</div>
-            </div>
-
-            <div class="row">
-                <div class="col">Состояние</div>
-                <div class="col">{{ asset.get_state_display|default:'-' }}</div>
-            </div>
-
-            <div class="row">
-                <div class="col">Комментарий к состоянию</div>
-                <div class="col">{{ asset.state_comment|default:'-' }}</div>
-            </div>
-        {% endif %}
+      </div>
     </div>
-
-    <div class="container">
-        <div class="row">
-            {% if asset.is_new %}
-                <div class="col">
-                    <form action="{% url 'assets:asset-archive' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="asset_id" value="{{ asset.id }}">
-                        <input type="hidden" name="back" value="{{ request.path }}">
-                        <button class="btn btn-primary" type="submit">Постоянное объявление</button>
-                    </form>
-                </div>
-            {% endif %}
-            {% if not asset.is_archived %}
-                <div class="col">
-                    <form action="{% url 'assets:asset-archive' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="asset_id" value="{{ asset.id }}">
-                        <input type="hidden" name="back" value="{{ request.path }}">
-                        <button class="btn btn-primary" type="submit">Архивировать</button>
-                    </form>
-                </div>
-            {% endif %}
-            <div class="col">
-                <a href="{% url 'assets:asset-update' asset.id %}" class="btn btn-primary">Редактировать</a>
-            </div>
-        </div>
-    </div>
-
     {% if photos %}
-        <div class="container">
+      <div class="col-lg-6 mt-5 mt-lg-0">
+        <div class="swiper-container">
+          <div class="swiper-wrapper">
             {% for photo in photos %}
-                <div class="row">
-                    <div class="col">
-                        <img src="{{ photo.photo.url }}" alt="">
-                    </div>
-                </div>
+              <div class="swiper-slide" style="background-image: url({{ photo.photo.url }})"></div>
             {% endfor %}
+          </div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
         </div>
+      </div>
     {% endif %}
+  </div>
+  {% if asset.characteristic %}
+    <div class="mt-5">
+      <p>{% lorem %}</p>
+    </div>
+  {% endif %}
 
-    {% if asset.is_immovable and asset.address %}
-        <div class="container">
-            <div class="YandexMap" data-coordinates="{{ asset.coordinates }}"></div>
-        </div>
-    {% endif %}
+  {% if asset.is_immovable and asset.address %}
+    <div class="YandexMap YandexMap__fillWidth mt-5" data-coordinates="{{ asset.coordinates }}"></div>
+  {% endif %}
 
+  <div class="mt-5">
     <h3>Таблица согласий</h3>
     <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">№</th>
-                    <th scope="col">ОГВ</th>
-                    <th scope="col">Будущий балансодержатель</th>
-                    <th scope="col">ФИО контактного лица</th>
-                    <th scope="col">Телефон контактного лица</th>
-                    <th scope="col">Email контактного лица</th>
-                    <th scope="col">Дата и время</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for resolution in approved_resolutions %}
-                    <tr {% if forloop.first %}class="table-success"{% endif %}>
-                        <td>{{ resolution.id }}</td>
-                        <td>{{ resolution.user }}</td>
-                        <td>{{ resolution.future_balance_holder }}</td>
-                        <td>{{ resolution.full_name_contact_person }}</td>
-                        <td>{{ resolution.phone_contact_person }}</td>
-                        <td>{{ resolution.email_contact_person }}</td>
-                        <td>{{ resolution.created_at }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">№</th>
+          <th scope="col">ОГВ</th>
+          <th scope="col">Будущий балансодержатель</th>
+          <th scope="col">Дата и время</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for resolution in approved_resolutions %}
+          <tr {% if forloop.first %}class="table-success"{% endif %}>
+            <td>{{ resolution.id }}</td>
+            <td>
+              {{ resolution.future_balance_holder }}<br>
+              {{ resolution.full_name_contact_person }}<br>
+              {{ resolution.phone_contact_person }}<br>
+              {{ resolution.email_contact_person }}<br>
+            </td>
+            <td>{{ resolution.created_at }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     </div>
 
     <h3>Таблица отказов</h3>
     <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">№</th>
-                    <th scope="col">ОГВ</th>
-                    <th scope="col">Дата и время</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for resolution in refused_resolutions %}
-                    <tr>
-                        <td>{{ resolution.id }}</td>
-                        <td>{{ resolution.user }}</td>
-                        <td>{{ resolution.created_at }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">№</th>
+          <th scope="col">ОГВ</th>
+          <th scope="col">Дата и время</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for resolution in refused_resolutions %}
+          <tr>
+            <td>{{ resolution.id }}</td>
+            <td>{{ resolution.user }}</td>
+            <td>{{ resolution.created_at }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     </div>
-
+  </div>
 {% endblock %}

@@ -29,6 +29,11 @@
             <input type="file" class="custom-file-input" id="customFile" name="photos" multiple>
             <label class="custom-file-label" for="customFile">Выберите файл</label>
           </div>
+          <div class="invalid-feedback">
+            {% for error in form.photos.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
         </div>
         <button class="btn btn-primary" type="submit">Сохранить</button>
       </form>
@@ -54,6 +59,11 @@
           <div class="custom-file">
             <input type="file" class="custom-file-input" id="customFile" name="photos" multiple>
             <label class="custom-file-label" for="customFile">Выберите файл</label>
+          </div>
+          <div class="invalid-feedback">
+            {% for error in form.photos.errors %}
+              {{ error }}
+            {% endfor %}
           </div>
         </div>
         <button class="btn btn-primary" type="submit">Сохранить</button>
