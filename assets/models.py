@@ -5,7 +5,7 @@ import os
 import requests
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -17,6 +17,7 @@ class KindAsset(models.TextChoices):
     NEW = "new", "Новые объявления"
     CONST = "const", "Постоянные объявления"
     ARCHIVE = "archive", "Архивные объявления"
+    WITH_APPLICANTS = "with_applicants", "Объявления с претендентами"
 
 
 class AssetQuerySet(models.QuerySet):
@@ -37,6 +38,13 @@ class AssetQuerySet(models.QuerySet):
     def archive_assets(self):
         query = Q(status=Asset.Status.ARCHIVED)
         return self.filter(query)
+
+    def with_applicants_assets(self):
+        return self.annotate(
+            resolution_count=Count(
+                "resolution", filter=Q(resolution__kind=Resolution.Kind.APPROVED)
+            )
+        ).filter(resolution_count__gt=0)
 
 
 class Asset(models.Model):

@@ -1,9 +1,7 @@
 import json
 import string
 
-from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
-
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import generic
@@ -30,6 +28,8 @@ class AssetsListView(generic.View):
             assets_qs = Asset.objects.cost_assets()
         if kind_asset == KindAsset.ARCHIVE.value:
             assets_qs = Asset.objects.archive_assets()
+        if kind_asset == KindAsset.WITH_APPLICANTS.value:
+            assets_qs = Asset.objects.with_applicants_assets()
 
         assets_dicts_list = [asset.get_asset_info() for asset in assets_qs]
         assets_json = json.dumps(assets_dicts_list, ensure_ascii=False)

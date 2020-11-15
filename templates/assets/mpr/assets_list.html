@@ -24,6 +24,12 @@
                 href="{% url 'assets:assets-list' kind_asset='archive' %}"
             >Архив</a>
         </li>
+        <li class="nav-item">
+            <a
+                class="nav-link {% if kind_asset == 'with_applicants' %}active{% endif %}"
+                href="{% url 'assets:assets-list' kind_asset='with_applicants' %}"
+            >Объявления с претендентами</a>
+        </li>
     </ul>
 
     <div class="mb-3">
