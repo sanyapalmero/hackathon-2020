@@ -5,6 +5,7 @@ from tempfile import NamedTemporaryFile
 from django.db import models
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls.base import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import generic
 from openpyxl import Workbook
@@ -13,6 +14,7 @@ from users.decorators import role_required
 from users.models import User
 
 from .forms import (
+    AssetMailForm,
     AssetSearchForm,
     ExportXlsForm,
     ImmovableAssetForm,
@@ -20,7 +22,14 @@ from .forms import (
     MovableAssetForm,
     ResolutionForm,
 )
-from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
+from .models import (
+    Asset,
+    AssetPhoto,
+    KindAsset,
+    Resolution,
+    XlsImport,
+    XlsImportColumnMatch,
+)
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -290,6 +299,47 @@ class AssetCreateView(generic.View):
             )
 
         return redirect(asset)
+
+
+@method_decorator(role_required(User.ROLE_USER), name="dispatch")
+class AssetMailView(generic.View):
+    form_class = AssetMailForm
+    template_name = "assets/mail.html"
+    success_url = reverse_lazy("assets:assets-list", kwargs={"kind_asset": "new"})
+
+    def get(self, request):
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": self.form_class(),
+            },
+        )
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+
+        if not form.is_valid():
+            return render(
+                request,
+                self.template_name,
+                {
+                    "form": form,
+                    "validation_called": True,
+                },
+            )
+
+        admin_users = User.objects.filter(role=User.ROLE_ADMIN)
+        for user in admin_users:
+            user.send_email(
+                subject="Письмо о высвобождении имущества",
+                templates_name="users/email/asset-request",
+                context={
+                    "data": form.cleaned_data,
+                },
+            )
+
+        return redirect(self.success_url)
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")

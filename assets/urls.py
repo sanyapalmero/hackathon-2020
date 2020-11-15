@@ -25,6 +25,7 @@ urlpatterns = [
         name="asset-const",
     ),
     path("asset-create/", views.AssetCreateView.as_view(), name="asset-create"),
+    path("asset-mail/", views.AssetMailView.as_view(), name="asset-mail"),
     path(
         "asset-detail/<int:pk>/update/",
         views.AssetUpdateView.as_view(),

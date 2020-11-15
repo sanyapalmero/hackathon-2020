@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Отправить письмо о высвобождении имущества{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">Отправить письмо о высвобождении имущества</h1>
+
+  <form action="." method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" name="type_asset" value="movable">
+    <div class="form-group">
+        {% include "common/textarea-field.html" with field=form.text %}
+    </div>
+    {% for field in form %}
+      <div class="form-group">
+        {% if field.html_name == "characteristic" %}
+          {% include "common/textarea-field.html" %}
+        {% elif field.html_name == "text" %}
+        {% else %}
+          {% include "common/text-field.html" %}
+        {% endif %}
+      </div>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Отправить</button>
+  </form>
+{% endblock %}

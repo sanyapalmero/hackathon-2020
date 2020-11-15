@@ -1,0 +1,9 @@
+{{ data.text }}
+
+Название: {{ data.name }}
+Адрес: {{ data.address }}
+Балансодержатель: {{ data.balance_holder }}
+Контактное лицо: {{ data.full_name_contact_person }}
+Телефон: {{ data.phone_contact_person }}
+Email: {{ data.email_contact_person }}
+Характеристика: {{ data.characteristic }}

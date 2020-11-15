@@ -20,6 +20,22 @@ class MovableAssetForm(forms.ModelForm):
         )
 
 
+class AssetMailForm(forms.ModelForm):
+    text = forms.CharField(required=True, label="Текст письма")
+
+    class Meta:
+        model = Asset
+        fields = (
+            "name",
+            "address",
+            "balance_holder",
+            "full_name_contact_person",
+            "phone_contact_person",
+            "email_contact_person",
+            "characteristic",
+        )
+
+
 class ImmovableAssetForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
