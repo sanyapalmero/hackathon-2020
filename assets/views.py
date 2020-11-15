@@ -109,6 +109,9 @@ class AssetDetailView(generic.DetailView):
         approved_resolutions = Resolution.objects.filter(
             asset=asset, kind=Resolution.Kind.APPROVED
         )
+        refused_resolutions = Resolution.objects.filter(
+            asset=asset, kind=Resolution.Kind.REFUSED
+        )
 
         return render(
             request,
@@ -117,6 +120,7 @@ class AssetDetailView(generic.DetailView):
                 "asset": asset,
                 "photos": photos,
                 "approved_resolutions": approved_resolutions,
+                "refused_resolutions": refused_resolutions,
             },
         )
 

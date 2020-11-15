@@ -113,6 +113,55 @@
     {% endif %}
 
     <h3>Таблица согласий</h3>
-    {% include 'partial/resolutions.html' with resolutions=approved_resolutions %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">№</th>
+                    <th scope="col">ОГВ</th>
+                    <th scope="col">Будущий балансодержатель</th>
+                    <th scope="col">ФИО контактного лица</th>
+                    <th scope="col">Телефон контактного лица</th>
+                    <th scope="col">Email контактного лица</th>
+                    <th scope="col">Дата и время</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resolution in approved_resolutions %}
+                    <tr>
+                        <td>{{ resolution.id }}</td>
+                        <td>{{ resolution.user }}</td>
+                        <td>{{ resolution.future_balance_holder }}</td>
+                        <td>{{ resolution.full_name_contact_person }}</td>
+                        <td>{{ resolution.phone_contact_person }}</td>
+                        <td>{{ resolution.email_contact_person }}</td>
+                        <td>{{ resolution.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Таблица отказов</h3>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">№</th>
+                    <th scope="col">ОГВ</th>
+                    <th scope="col">Дата и время</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resolution in refused_resolutions %}
+                    <tr>
+                        <td>{{ resolution.id }}</td>
+                        <td>{{ resolution.user }}</td>
+                        <td>{{ resolution.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}
