@@ -13,20 +13,14 @@ from users.decorators import role_required
 from users.models import User
 
 from .forms import (
+    AssetSearchForm,
     ExportXlsForm,
     ImmovableAssetForm,
     ImportXlsSelectFileForm,
     MovableAssetForm,
     ResolutionForm,
 )
-from .models import (
-    Asset,
-    AssetPhoto,
-    KindAsset,
-    Resolution,
-    XlsImport,
-    XlsImportColumnMatch,
-)
+from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -34,6 +28,51 @@ from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 class AssetsListView(generic.View):
     mpr_template_name = "assets/mpr/assets_list.html"
     ogv_template_name = "assets/ogv/assets_list.html"
+
+    search_form_class = AssetSearchForm
+
+    def _search_filter(self, assets_qs, search_form):
+        balance_holder = search_form.cleaned_data["balance_holder"]
+        if balance_holder:
+            assets_qs = assets_qs.filter(balance_holder__icontains=balance_holder)
+
+        name = search_form.cleaned_data["name"]
+        if name:
+            assets_qs = assets_qs.filter(name__icontains=name)
+
+        type_asset = search_form.cleaned_data["type_asset"]
+        if type_asset:
+            assets_qs = assets_qs.filter(type_asset=type_asset)
+
+        expiration_date_start = search_form.cleaned_data["expiration_date_start"]
+        if expiration_date_start:
+            assets_qs = assets_qs.filter(expiration_date__gte=expiration_date_start)
+
+        expiration_date_end = search_form.cleaned_data["expiration_date_end"]
+        if expiration_date_start:
+            assets_qs = assets_qs.filter(expiration_date__lte=expiration_date_end)
+
+        address = search_form.cleaned_data["address"]
+        if address:
+            assets_qs = assets_qs.filter(address__icontains=address)
+
+        square_start = search_form.cleaned_data["square_start"]
+        if square_start:
+            assets_qs = assets_qs.filter(square__gte=square_start)
+
+        square_end = search_form.cleaned_data["square_end"]
+        if square_end:
+            assets_qs = assets_qs.filter(square__lte=square_end)
+
+        cadastral_number = search_form.cleaned_data["cadastral_number"]
+        if cadastral_number:
+            assets_qs = assets_qs.filter(cadastral_number__icontains=cadastral_number)
+
+        state = search_form.cleaned_data["state"]
+        if state:
+            assets_qs = assets_qs.filter(state=state)
+
+        return assets_qs
 
     def _get_admin(self, request, kind_asset):
         assets_qs = None
@@ -50,6 +89,10 @@ class AssetsListView(generic.View):
         assets_dicts_list = [asset.get_asset_info() for asset in assets_qs]
         assets_json = json.dumps(assets_dicts_list, ensure_ascii=False)
 
+        search_form = self.search_form_class(request.GET)
+        if search_form.is_valid():
+            assets_qs = self._search_filter(assets_qs, search_form)
+
         return render(
             request,
             self.mpr_template_name,
@@ -57,6 +100,7 @@ class AssetsListView(generic.View):
                 "assets_qs": assets_qs,
                 "kind_asset": kind_asset,
                 "assets_json": assets_json,
+                "search_form": search_form,
             },
         )
 
@@ -74,6 +118,10 @@ class AssetsListView(generic.View):
         assets_dicts_list = [asset.get_asset_info() for asset in assets_qs]
         assets_json = json.dumps(assets_dicts_list, ensure_ascii=False)
 
+        search_form = self.search_form_class(request.GET)
+        if search_form.is_valid():
+            assets_qs = self._search_filter(assets_qs, search_form)
+
         return render(
             request,
             self.ogv_template_name,
@@ -81,6 +129,7 @@ class AssetsListView(generic.View):
                 "assets_qs": assets_qs,
                 "kind_asset": kind_asset,
                 "assets_json": assets_json,
+                "search_form": search_form,
             },
         )
 
