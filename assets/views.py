@@ -15,7 +15,7 @@ from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
-class MPRAssetsListView(generic.View):
+class AssetsListView(generic.View):
     template_name = "assets/mpr/assets_list.html"
 
     def get(self, request, kind_asset):
@@ -58,7 +58,7 @@ class AssetDetailView(generic.DetailView):
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
-class MPRArchiveAssetView(generic.View):
+class ArchiveAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
 
@@ -75,7 +75,7 @@ class MPRArchiveAssetView(generic.View):
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
-class MPRConstAssetView(generic.View):
+class ConstAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
 

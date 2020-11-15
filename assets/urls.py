@@ -7,22 +7,22 @@ app_name = "assets"
 
 urlpatterns = [
     path(
-        "mpr-assets-list/<str:kind_asset>/",
-        views.MPRAssetsListView.as_view(),
-        name="mpr-assets-list",
+        "assets-list/<str:kind_asset>/",
+        views.AssetsListView.as_view(),
+        name="assets-list",
     ),
     path(
         "asset-detail/<int:pk>/", views.AssetDetailView.as_view(), name="asset-detail"
     ),
     path(
-        "mpr-asset-archive/",
-        views.MPRArchiveAssetView.as_view(),
-        name="mpr-asset-archive",
+        "asset-archive/",
+        views.ArchiveAssetView.as_view(),
+        name="asset-archive",
     ),
     path(
-        "mpr-asset-const/",
-        views.MPRConstAssetView.as_view(),
-        name="mpr-asset-const",
+        "asset-const/",
+        views.ConstAssetView.as_view(),
+        name="asset-const",
     ),
     path("asset-create/", views.AssetCreateView.as_view(), name="asset-create"),
     path(
