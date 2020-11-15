@@ -1,7 +1,6 @@
 import json
 import string
 
-
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
@@ -10,20 +9,8 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import (
-    ImmovableAssetForm,
-    ImportXlsSelectFileForm,
-    MovableAssetForm,
-    ResolutionForm,
-)
-from .models import (
-    Asset,
-    AssetPhoto,
-    KindAsset,
-    Resolution,
-    XlsImport,
-    XlsImportColumnMatch,
-)
+from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
+from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -243,7 +230,9 @@ class AssetUpdateView(generic.View):
         if asset.type_asset == Asset.TypeAsset.IMMOVABLE.value:
             form = self.immovable_form_class(instance=asset)
 
-        return render(request, self.template_name, context={"form": form})
+        return render(
+            request, self.template_name, context={"form": form, "asset": asset}
+        )
 
     def post(self, request, pk):
         asset = get_object_or_404(Asset, id=pk)
@@ -255,7 +244,9 @@ class AssetUpdateView(generic.View):
             form = self.immovable_form_class(request.POST, instance=asset)
 
         if not form.is_valid():
-            return render(request, self.template_name, context={"form": form})
+            return render(
+                request, self.template_name, context={"form": form, "asset": asset}
+            )
 
         asset = form.save()
 

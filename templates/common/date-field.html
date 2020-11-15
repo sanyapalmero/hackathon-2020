@@ -1,14 +1,14 @@
-<label for="{{ movable_form.expiration_date.id_for_label }}">{{ movable_form.expiration_date.label }}</label>
+<label for="{{ field.id_for_label }}">{{ field.label }}</label>
 {% if clear_button %}
-<button class="btn btn-sm btn-secondary ResetInput" data-target-input='input[name="{{ movable_form.expiration_date.html_name }}"]' type="button">Сбросить</button>
+<button class="btn btn-sm btn-secondary ResetInput" data-target-input='input[name="{{ field.html_name }}"]' type="button">Сбросить</button>
 {% endif %}
 <input type="date" class="form-control {% spaceless %}
   {% if validation_called %}
     {% if field.errors %}is-invalid{% else %}is-valid{% endif %}
   {% endif %}
 {% endspaceless %}"
-       name="{{ movable_form.expiration_date.html_name }}"
-       value="{{ movable_form.expiration_date.value|default:"" }}"
+       name="{{ field.html_name }}"
+       value="{{field.value|date:"Y-m-d" |default:"" }}"
 >
 {% if help_text %}
   <small id="passwordHelpInline" class="text-muted">

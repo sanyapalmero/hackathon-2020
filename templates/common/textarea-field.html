@@ -3,8 +3,8 @@
   {% if validation_called %}
     {% if field.errors %}is-invalid{% else %}is-valid{% endif %}
   {% endif %}
-{% endspaceless %}" name="{{ movable_form.characteristic.html_name }}" cols="30" rows="10">{% spaceless %}
-  {{ movable_form.characteristic.value|default:"" }}
+{% endspaceless %}" name="{{ field.html_name }}" cols="30" rows="10">{% spaceless %}
+  {{ field.value|default:"" }}
 {% endspaceless %}</textarea>
 <div class="invalid-feedback">
   {% for error in field.errors %}
