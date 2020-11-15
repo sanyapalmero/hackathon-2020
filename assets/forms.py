@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.db import models
 
 from .models import Asset, Resolution
@@ -88,4 +89,35 @@ class ExportXlsForm(forms.Form):
         choices=ResolutionStatus.choices,
         initial="all",
         label="Наличие претендентов",
+    )
+
+
+class AssetSearchForm(forms.Form):
+    balance_holder = forms.CharField(
+        max_length=settings.LEN, required=False, label="Балансодержатель"
+    )
+    name = forms.CharField(
+        max_length=settings.LEN, required=False, label="Наименование"
+    )
+    type_asset = forms.ChoiceField(
+        choices=Asset.TypeAsset.choices, required=False, label="Вид"
+    )
+    expiration_date_start = forms.DateField(
+        required=False, label="Срок рассмотрения от"
+    )
+    expiration_date_end = forms.DateField(required=False, label="Срок рассмотрения до")
+    address = forms.CharField(
+        max_length=settings.LEN, required=False, label="Местонахождение"
+    )
+    square_start = forms.DecimalField(
+        max_digits=12, decimal_places=4, required=False, label="Площадь от"
+    )
+    square_end = forms.DecimalField(
+        max_digits=12, decimal_places=4, required=False, label="Площадь до"
+    )
+    cadastral_number = forms.CharField(
+        max_length=settings.LEN, required=False, label="Кадастровый номер"
+    )
+    state = forms.ChoiceField(
+        choices=Asset.State.choices, required=False, label="Состояние"
     )

@@ -4,11 +4,20 @@
     {% if field.errors %}is-invalid{% else %}is-valid{% endif %}
   {% endif %}
 {% endspaceless %}">
-  <option value selected disabled>{{ default_value }}</option>
+  <option
+    value
+    selected
+    {% if disabled %}disabled{% endif %}
+  >
+    {{ default_value }}
+  </option>
   {% for value, text in field.field.choices %}
-    {% if forloop.counter0 != 0 %}
-      <option value="{{ value }}">{{ text }}</option>
-    {% endif %}
+    <option
+      value="{{ value }}"
+      {% if value == field.value %}selected{% endif %}
+    >
+      {{ text }}
+    </option>
   {% endfor %}
 </select>
 <div class="invalid-feedback">
