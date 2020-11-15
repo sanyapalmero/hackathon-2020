@@ -18,24 +18,30 @@
         </li>
     </ul>
 
-    <form action="" method="GET">
-        {% for field in search_form %}
-            <div class="form-group">
-                {% if field.html_name == "type_asset" %}
-                    {% include "common/select-field.html" with default_value="Выберите вид" %}
-                {% elif field.html_name == "expiration_date_start" or field.html_name == "expiration_date_end" %}
-                    {% include "common/date-field.html" with help_text="" %}
-                {% elif field.html_name == "state" %}
-                    {% include "common/select-field.html" with default_value="Выберите состояние" %}
-                {% else %}
-                    {% include "common/text-field.html" %}
-                {% endif %}
-            </div>
-        {% endfor %}
-        <button class="btn btn-primary" type="submit">Поиск</button>
-    </form>
-
     <div class="YandexMap mb-3 mw-100" data-assets="{{ assets_json }}"></div>
+
+    <div class="mb-3">
+        <button class="btn btn-secondary" data-toggle="collapse" data-target="#filter-collapse">Показать фильтры</button>
+    </div>
+
+    <div class="collapse" id="filter-collapse">
+        <form action="" method="GET" class="mb-3">
+            {% for field in search_form %}
+                <div class="form-group">
+                    {% if field.html_name == "type_asset" %}
+                        {% include "common/select-field.html" with default_value="Выберите вид" %}
+                    {% elif field.html_name == "expiration_date_start" or field.html_name == "expiration_date_end" %}
+                        {% include "common/date-field.html" with help_text="" %}
+                    {% elif field.html_name == "state" %}
+                        {% include "common/select-field.html" with default_value="Выберите состояние" %}
+                    {% else %}
+                        {% include "common/text-field.html" %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button class="btn btn-primary" type="submit">Поиск</button>
+        </form>
+    </div>
 
     <div class="table-responsive">
         <table class="table">
