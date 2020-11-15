@@ -113,6 +113,11 @@
 
   <div class="mt-5">
     <h3>Решения о необходимости в имуществе</h3>
+    <a
+      href="{% url 'assets:asset-protocol' pk=asset.pk %}"
+      target="_blank"
+      class="btn btn-primary mb-3"
+    >Напечатать протокол о передаче имущества</a>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -142,6 +147,11 @@
     </div>
 
     <h3>Отказы от имущества</h3>
+    <a
+      href="{% url 'assets:asset-protocol' pk=asset.pk %}"
+      target="_blank"
+      class="btn btn-primary mb-3"
+    >Напечатать протокол об отказе</a>
     <div class="table-responsive">
       <table class="table">
         <thead>
