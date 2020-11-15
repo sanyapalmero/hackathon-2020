@@ -60,6 +60,12 @@ class User(AbstractBaseUser):
         return self.is_admin
 
     def send_email(self, subject, templates_name, context):
+        if not self.email:
+            return
+
+        if "example.com" in self.email or "root.com" in self.email:
+            return
+
         message_txt = render_to_string(
             templates_name + ".txt",
             context,

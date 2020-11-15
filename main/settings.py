@@ -141,15 +141,14 @@ USE_TZ = True
 
 # Email settings
 
-# Default backend: 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.yandex.ru"
-EMAIL_PORT = 465
 EMAIL_HOST_USER = "h2020@oxymeal.ru"
 EMAIL_DEFAULT_FROM = "h2020@oxymeal.ru"
 SERVER_EMAIL = "h2020@oxymeal.ru"
-EMAIL_HOST_PASSWORD = "skfq2kqwM66iA6N74WJf"
-EMAIL_TLS = True
+EMAIL_HOST_PASSWORD = "8AKrP1ETr2Mez0nPA5J7"
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
 
 
 # Static files (CSS, JavaScript, Images)
