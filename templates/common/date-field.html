@@ -1,4 +1,7 @@
 <label for="{{ movable_form.expiration_date.id_for_label }}">{{ movable_form.expiration_date.label }}</label>
+{% if clear_button %}
+<button class="btn btn-sm btn-secondary ResetInput" data-target-input='input[name="{{ movable_form.expiration_date.html_name }}"]' type="button">Сбросить</button>
+{% endif %}
 <input type="date" class="form-control {% spaceless %}
   {% if validation_called %}
     {% if field.errors %}is-invalid{% else %}is-valid{% endif %}

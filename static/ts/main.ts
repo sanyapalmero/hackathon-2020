@@ -8,6 +8,7 @@ import bsCustomFileInput from 'bs-custom-file-input'
 import ModalValue from './components/ModalValue';
 import YandexMap from './components/YandexMap';
 import DemoFill from "./components/DemoFill";
+import ResetInputElement from "./components/ResetInputElement";
 
 
 // Set value for modal window
@@ -25,4 +26,8 @@ $('.YandexMap').each((index, htmlElement) => {
 
 $('.DemoFill').each((index, htmlElement) => {
   new DemoFill(htmlElement);
+});
+
+$(".ResetInput").each((index, htmlElement)=>{
+  new ResetInputElement(htmlElement);
 });
