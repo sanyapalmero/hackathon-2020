@@ -1,26 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <form action="" method="POST" enctype="multipart/form-data">
+  <ul class="nav nav-tabs mb-3 nav-fill">
+    <li class="nav-item">
+      <a href="#movable" data-toggle="tab" class="nav-link {% if not immovable_form_received %} active{% endif %}">Движимое имущество</a>
+    </li>
+    <li class="nav-item">
+      <a href="#immovable" data-toggle="tab" class="nav-link {% if immovable_form_received %} active{% endif %}">Недвижимое имущество</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane fade{% if not immovable_form_received %} show active{% endif %}" id="movable">
+      <form action="." method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <!-- movable -->
-        <!-- immovable -->
-        <input type="hidden" name="type_asset" value="movable" id="id_type_asset">
-        {{ movable_form.as_p }}
+        <input type="hidden" name="type_asset" value="movable">
+        {% for field in movable_form %}
+          <div class="form-group">
+            {% if field.html_name == "characteristic" %}
+              {% include "common/textarea-field.html" with form=movable_form %}
+            {% elif field.html_name == "expiration_date" %}
+              {% include "common/date-field.html" %}
+            {% else %}
+              {% include "common/text-field.html" %}
+            {% endif %}
+          </div>
+        {% endfor %}
+        <div class="invalid-feedback">
+          {% for error in field.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
         <input type="file" name="photos" multiple>
-        <button type="submit">Сохранить</button>
-    </form>
-
-    <form action="" method="POST" enctype="multipart/form-data">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+      </form>
+    </div>
+    <div class="tab-pane fade{% if immovable_form_received %}show active{% endif %}" id="immovable">
+      <form action="." method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <!-- movable -->
         <!-- immovable -->
         <input type="hidden" name="type_asset" value="immovable" id="id_type_asset">
-        {{ immovable_form.as_p }}
+        {% for field in immovable_form %}
+          <div class="form-group">
+            {% if field.html_name == "characteristic" or field.html_name == "state_comment" %}
+              {% include "common/textarea-field.html" with form=movable_form %}
+            {% elif field.html_name == "expiration_date" %}
+              {% include "common/date-field.html" %}
+            {% elif field.html_name == "state" %}
+              {% include "common/select-field.html" with default_value="Выберите состояние" %}
+            {% else %}
+              {% include "common/text-field.html" %}
+            {% endif %}
+          </div>
+        {% endfor %}
         <input type="file" name="photos" multiple>
-        <button type="submit">Сохранить</button>
-    </form>
-</div>
-
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+      </form>
+    </div>
+  </div>
 {% endblock %}

@@ -8,8 +8,8 @@ class MovableAssetForm(forms.ModelForm):
     class Meta:
         model = Asset
         fields = (
-            "balance_holder",
             "name",
+            "balance_holder",
             "full_name_contact_person",
             "phone_contact_person",
             "email_contact_person",
@@ -28,8 +28,8 @@ class ImmovableAssetForm(forms.ModelForm):
     class Meta:
         model = Asset
         fields = (
-            "balance_holder",
             "name",
+            "balance_holder",
             "full_name_contact_person",
             "phone_contact_person",
             "email_contact_person",

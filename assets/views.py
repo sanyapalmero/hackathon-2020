@@ -146,6 +146,7 @@ class AssetCreateView(generic.View):
                 request,
                 self.template_name,
                 context={
+                    "validation_called": True,
                     "movable_form": movable_form,
                     "immovable_form": immovable_form,
                 },
@@ -162,6 +163,8 @@ class AssetCreateView(generic.View):
                 request,
                 self.template_name,
                 context={
+                    "validation_called": True,
+                    "immovable_form_received": True,
                     "movable_form": movable_form,
                     "immovable_form": immovable_form,
                 },

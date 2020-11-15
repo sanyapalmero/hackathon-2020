@@ -1,0 +1,18 @@
+<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+<select name="{{ field.html_name }}" class="custom-select {% spaceless %}
+  {% if validation_called %}
+    {% if field.errors %}is-invalid{% else %}is-valid{% endif %}
+  {% endif %}
+{% endspaceless %}">
+  <option value selected disabled>{{ default_value }}</option>
+  {% for value, text in field.field.choices %}
+    {% if forloop.counter0 != 0 %}
+      <option value="{{ value }}">{{ text }}</option>
+    {% endif %}
+  {% endfor %}
+</select>
+<div class="invalid-feedback">
+  {% for error in field.errors %}
+    {{ error }}
+  {% endfor %}
+</div>
