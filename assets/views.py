@@ -1,7 +1,9 @@
 import json
 import string
 
-from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+from django.http import Http404, HttpResponse, JsonResponse
+
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import generic
@@ -9,16 +11,19 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm
-from .models import Asset, AssetPhoto, KindAsset, XlsImport, XlsImportColumnMatch
+from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
+from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
-@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
-class MPRAssetsListView(generic.View):
-    template_name = "assets/mpr/assets_list.html"
+@method_decorator(role_required(User.ROLE_ADMIN, User.ROLE_USER), name="dispatch")
+class AssetsListView(generic.View):
+    mpr_template_name = "assets/mpr/assets_list.html"
+    ogv_template_name = "assets/ogv/assets_list.html"
 
-    def get(self, request, kind_asset):
+    def _get_admin(self, request, kind_asset):
+        assets_qs = None
+
         if kind_asset == KindAsset.NEW.value:
             assets_qs = Asset.objects.new_assets()
         if kind_asset == KindAsset.CONST.value:
@@ -31,12 +36,49 @@ class MPRAssetsListView(generic.View):
 
         return render(
             request,
-            self.template_name,
-            context={"assets_qs": assets_qs, "assets_json": assets_json},
+            self.mpr_template_name,
+            context={
+                "assets_qs": assets_qs,
+                "kind_asset": kind_asset,
+                "assets_json": assets_json,
+            },
         )
 
+    def _get_user(self, request, kind_asset):
+        assets_qs = None
 
-@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
+        if kind_asset == KindAsset.ARCHIVE.value:
+            raise Http404()
+
+        if kind_asset == KindAsset.NEW.value:
+            assets_qs = Asset.objects.new_assets()
+        if kind_asset == KindAsset.CONST.value:
+            assets_qs = Asset.objects.cost_assets()
+
+        return render(
+            request,
+            self.ogv_template_name,
+            context={
+                "assets_qs": assets_qs,
+                "kind_asset": kind_asset,
+            },
+        )
+
+    def get(self, request, kind_asset):
+        if kind_asset not in KindAsset:
+            raise Http404()
+
+        user = request.user
+
+        if user.is_admin:
+            return self._get_admin(request, kind_asset)
+        elif user.is_user:
+            return self._get_user(request, kind_asset)
+        else:
+            raise Http404()
+
+
+@method_decorator(role_required(User.ROLE_ADMIN, User.ROLE_USER), name="dispatch")
 class AssetDetailView(generic.DetailView):
     mpr_template_name = "assets/mpr/asset_detail.html"
     ogv_template_name = "assets/ogv/asset_detail.html"
@@ -64,7 +106,7 @@ class AssetDetailView(generic.DetailView):
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
-class MPRArchiveAssetView(generic.View):
+class ArchiveAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
 
@@ -81,7 +123,7 @@ class MPRArchiveAssetView(generic.View):
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
-class MPRConstAssetView(generic.View):
+class ConstAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
 
@@ -198,6 +240,46 @@ class AssetUpdateView(generic.View):
             return render(request, self.template_name, context={"form": form})
 
         asset = form.save()
+
+        return redirect(asset)
+
+
+@method_decorator(role_required(User.ROLE_USER), name="dispatch")
+class RefusedAssetView(generic.View):
+    def post(self, request, pk):
+        asset = Asset.objects.get(pk=pk)
+        resolution = Resolution(asset=asset, user=request.user)
+        resolution.kind = Resolution.Kind.REFUSED
+        resolution.save()
+
+        return redirect(asset)
+
+
+class ApprovedAssetView(generic.View):
+    template_name = "assets/ogv/resolution_form.html"
+    form_class = ResolutionForm
+
+    def get(self, request, pk):
+        form = self.form_class()
+        asset = Asset.objects.get(pk=pk)
+        return render(
+            request, self.template_name, context={"form": form, "asset": asset}
+        )
+
+    def post(self, request, pk):
+        asset = Asset.objects.get(pk=pk)
+        form = self.form_class(request.POST)
+
+        if not form.is_valid():
+            return render(
+                request, self.template_name, context={"form": form, "asset": asset}
+            )
+
+        resolution = form.save(commit=False)
+        resolution.user = request.user
+        resolution.asset = asset
+        resolution.kind = Resolution.Kind.APPROVED
+        resolution.save()
 
         return redirect(asset)
 
@@ -329,4 +411,4 @@ class ImportXlsPreviewView(generic.View):
         for asset in assets:
             asset.save()
 
-        return redirect("assets:import-xls-select-file")
+        return redirect("assets:assets-list", kind_asset="new")

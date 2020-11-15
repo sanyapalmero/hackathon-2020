@@ -7,28 +7,38 @@ app_name = "assets"
 
 urlpatterns = [
     path(
-        "mpr-assets-list/<str:kind_asset>/",
-        views.MPRAssetsListView.as_view(),
-        name="mpr-assets-list",
+        "assets-list/<str:kind_asset>/",
+        views.AssetsListView.as_view(),
+        name="assets-list",
     ),
     path(
         "asset-detail/<int:pk>/", views.AssetDetailView.as_view(), name="asset-detail"
     ),
     path(
-        "mpr-asset-archive/",
-        views.MPRArchiveAssetView.as_view(),
-        name="mpr-asset-archive",
+        "asset-archive/",
+        views.ArchiveAssetView.as_view(),
+        name="asset-archive",
     ),
     path(
-        "mpr-asset-const/",
-        views.MPRConstAssetView.as_view(),
-        name="mpr-asset-const",
+        "asset-const/",
+        views.ConstAssetView.as_view(),
+        name="asset-const",
     ),
     path("asset-create/", views.AssetCreateView.as_view(), name="asset-create"),
     path(
         "asset-detail/<int:pk>/update/",
         views.AssetUpdateView.as_view(),
         name="asset-update",
+    ),
+    path(
+        "asset-detail/<int:pk>/refused/",
+        views.RefusedAssetView.as_view(),
+        name="asset-refused",
+    ),
+    path(
+        "asset-detail/<int:pk>/approved/",
+        views.ApprovedAssetView.as_view(),
+        name="asset-approved",
     ),
     path(
         "import-xls/select-file/",

@@ -122,6 +122,7 @@ ATTRIBUTE_IMPORTERS = {
         {
             "ремонт": Asset.State.USABLE_WITH_REPAIR,
             "не пригоден": Asset.State.UNUSABLE,
+            "непригоден": Asset.State.UNUSABLE,
             "": Asset.State.USABLE,
         },
         default=Asset.State.USABLE,
