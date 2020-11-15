@@ -8,7 +8,13 @@
   {% endif %}
 {% endspaceless %}"
        name="{{ movable_form.expiration_date.html_name }}"
-       value="{{ movable_form.expiration_date.value|default:"" }}">
+       value="{{ movable_form.expiration_date.value|default:"" }}"
+>
+{% if help_text %}
+  <small id="passwordHelpInline" class="text-muted">
+    {{ help_text }}
+  </small>
+{% endif %}
 <div class="invalid-feedback">
   {% for error in field.errors %}
     {{ error }}

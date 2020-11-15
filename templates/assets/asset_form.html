@@ -21,7 +21,7 @@
             {% if field.html_name == "characteristic" %}
               {% include "common/textarea-field.html" with form=movable_form %}
             {% elif field.html_name == "expiration_date" %}
-              {% include "common/date-field.html" with clear_button=True %}
+              {% include "common/date-field.html" with clear_button=True help_text="Если даты нет, объявление постоянное." %}
             {% else %}
               {% include "common/text-field.html" %}
             {% endif %}
@@ -51,7 +51,7 @@
             {% if field.html_name == "characteristic" or field.html_name == "state_comment" %}
               {% include "common/textarea-field.html" with form=movable_form %}
             {% elif field.html_name == "expiration_date" %}
-              {% include "common/date-field.html" with clear_button=True %}
+              {% include "common/date-field.html" with clear_button=True help_text="Если даты нет, объявление постоянное." %}
             {% elif field.html_name == "state" %}
               {% include "common/select-field.html" with default_value="Выберите состояние" %}
             {% else %}
