@@ -9,20 +9,8 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import (
-    ImmovableAssetForm,
-    ImportXlsSelectFileForm,
-    MovableAssetForm,
-    ResolutionForm,
-)
-from .models import (
-    Asset,
-    AssetPhoto,
-    KindAsset,
-    Resolution,
-    XlsImport,
-    XlsImportColumnMatch,
-)
+from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
+from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -414,4 +402,4 @@ class ImportXlsPreviewView(generic.View):
         for asset in assets:
             asset.save()
 
-        return redirect("assets:mpr-assets-list", kind_asset="new")
+        return redirect("assets:assets-list", kind_asset="new")
