@@ -74,6 +74,7 @@ class User(AbstractBaseUser):
             html_message=message_html,
             from_email=settings.EMAIL_DEFAULT_FROM,
             recipient_list=[self.email],
+            fail_silently=True,
         )
 
     class Meta:
