@@ -136,6 +136,14 @@ class Asset(models.Model):
         return self.status == self.Status.ACTIVE
 
     @property
+    def is_new(self):
+        return (
+            self.is_active
+            and self.expiration_date
+            and self.expiration_date >= timezone.now().date()
+        )
+
+    @property
     def is_archived(self):
         return self.status == self.Status.ARCHIVED
 

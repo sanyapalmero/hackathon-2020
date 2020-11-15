@@ -3,9 +3,7 @@
 {% block content %}
     <div class="YandexMap" data-assets="{{ assets_json }}"></div>
 
-    <a href="{% url 'assets:import-xls-select-file' %}" class="btn btn-secondary">Импорт Excel</a>
-
-    <ul class="nav nav-tabs mb-3">
+    <ul class="nav nav-tabs nav-fill mb-3">
         <li class="nav-item">
             <a
                 class="nav-link {% if kind_asset == 'new' %}active{% endif %}"
