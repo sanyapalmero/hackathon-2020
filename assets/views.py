@@ -292,7 +292,7 @@ class AssetCreateView(generic.View):
                 context={
                     "id": asset.id,
                     "name": asset.name,
-                    "link": self.request.META["HTTP_HOST"] + asset.get_absolute_url(),
+                    "link": self.request.build_absolute_uri(asset.get_absolute_url()),
                 },
             )
 
@@ -393,7 +393,7 @@ class ApprovedAssetView(generic.View):
                 context={
                     "id": asset.id,
                     "name": asset.name,
-                    "link": self.request.META["HTTP_HOST"] + asset.get_absolute_url(),
+                    "link": self.request.build_absolute_uri(asset.get_absolute_url()),
                 },
             )
 
