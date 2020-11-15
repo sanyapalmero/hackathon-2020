@@ -29,7 +29,7 @@ class MPRAssetsListView(generic.View):
         return render(request, self.template_name, context={"assets_qs": assets_qs})
 
 
-@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
+@method_decorator(role_required(User.ROLE_ADMIN, User.ROLE_USER), name="dispatch")
 class AssetDetailView(generic.DetailView):
     mpr_template_name = "assets/mpr/asset_detail.html"
     ogv_template_name = "assets/ogv/asset_detail.html"
