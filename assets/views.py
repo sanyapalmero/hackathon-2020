@@ -161,6 +161,10 @@ class AssetCreateView(generic.View):
         asset.type_asset = type_asset
         asset.save()
 
+        photos = request.FILES.getlist("photos")
+        for photo in photos:
+            AssetPhoto.objects.create(asset=asset, photo=photo)
+
         return redirect(asset)
 
 
