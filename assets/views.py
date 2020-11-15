@@ -1,7 +1,9 @@
+import json
 import string
 
 from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
+
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import generic
@@ -29,12 +31,16 @@ class AssetsListView(generic.View):
         if kind_asset == KindAsset.ARCHIVE.value:
             assets_qs = Asset.objects.archive_assets()
 
+        assets_dicts_list = [asset.get_asset_info() for asset in assets_qs]
+        assets_json = json.dumps(assets_dicts_list, ensure_ascii=False)
+
         return render(
             request,
             self.mpr_template_name,
             context={
                 "assets_qs": assets_qs,
                 "kind_asset": kind_asset,
+                "assets_json": assets_json,
             },
         )
 
@@ -95,7 +101,6 @@ class AssetDetailView(generic.DetailView):
             context={
                 "asset": asset,
                 "photos": photos,
-                "yandex_maps_api_key": settings.YANDEX_MAPS_API_KEY,
             },
         )
 
@@ -197,6 +202,10 @@ class AssetCreateView(generic.View):
         asset = result.save(commit=False)
         asset.type_asset = type_asset
         asset.save()
+
+        photos = request.FILES.getlist("photos")
+        for photo in photos:
+            AssetPhoto.objects.create(asset=asset, photo=photo)
 
         return redirect(asset)
 

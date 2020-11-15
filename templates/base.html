@@ -1,5 +1,6 @@
 {% spaceless %}
 {% load render_bundle from webpack_loader %}
+{% load yandex_api %}
 {% endspaceless %}<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -39,6 +40,9 @@
   <div class="content container">
     {% block content %}{% endblock %}
   </div>
+
+  {% get_yandex_maps_api_key as yandex_maps_api_key %}
+  <script src="https://api-maps.yandex.ru/2.1/?apikey={{yandex_maps_api_key}}&lang=ru_RU" type="text/javascript"></script>
 
   {% render_bundle 'main' 'js' %}
 </body>

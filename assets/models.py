@@ -116,6 +116,21 @@ class Asset(models.Model):
     def get_absolute_url(self):
         return reverse("assets:asset-detail", kwargs={"pk": self.pk})
 
+    def get_asset_info(self):
+        asset_info = f"<div><b>{self.name}</b></div>"
+        asset_info += f"<div>{self.address}</div>"
+        asset_info += f"<div>{self.get_state_display()}</div>"
+        asset_info += f"<div><a href='{self.get_absolute_url()}' target='_blank'>Подробнее</a></div>"
+
+        photos = AssetPhoto.objects.filter(asset=self)
+        if photos:
+            asset_info += f"<div><img src='{photos[0].photo.url}' class='YandexMap-AssetThumbnail'></div>"
+
+        return {
+            "asset_info": asset_info,
+            "coordinates": self.coordinates,
+        }
+
     @property
     def is_active(self):
         return self.status == self.Status.ACTIVE
