@@ -1,58 +1,109 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <a href="{% url 'assets:import-xls-select-file' %}" class="btn btn-secondary">Импорт Excel</a>
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a
+                class="nav-link {% if kind_asset == 'new' %}active{% endif %}"
+                href="{% url 'assets:assets-list' kind_asset='new' %}"
+            >Новые объявления</a>
+        </li>
+        <li class="nav-item">
+            <a
+                class="nav-link {% if kind_asset == 'const' %}active{% endif %}"
+                href="{% url 'assets:assets-list' kind_asset='const' %}"
+            >Постоянные объявления</a>
+        </li>
+        <li class="nav-item">
+            <a
+                class="nav-link {% if kind_asset == 'archive' %}active{% endif %}"
+                href="{% url 'assets:assets-list' kind_asset='archive' %}"
+            >Архив</a>
+        </li>
+    </ul>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Балансодержатель</th>
-                <th scope="col">Вид</th>
-                <th scope="col">Наименование</th>
-                <th scope="col">Адрес</th>
-                <th scope="col">Состояние</th>
-                <th scope="col">Срок рассмотрения</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for asset in assets_qs %}
+    <div class="mb-3">
+        <a href="{% url 'assets:asset-create' %}" class="btn btn-primary">Добавить объявление</a>
+        <a href="{% url 'assets:import-xls-select-file' %}" class="btn btn-secondary">Добавить из Excel</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ asset.balance_holder }}</td>
-                    <td>{{ asset.get_type_asset_display }}</td>
-                    <td>{{ asset.name }}</td>
-                    <td>{{ asset.address|default:'-'}}</td>
-                    <td>{{ asset.get_state_display|default:'-'}}</td>
-                    <td>{{ asset.expiration_date|default:'-'}}</td>
-                    <td>
-                        <a
-                            class="btn btn-primary"
-                            href="#id_form_modal_archive"
-                            data-toggle="modal"
-                            data-whatever="{{ asset.id }}"
-                            data-field-id="#id_asset"
-                        >
-                            Архивировать
-                        </a>
-                    </td>
-                    <td>
-                        <a
-                            class="btn btn-primary"
-                            href="#id_form_modal_const"
-                            data-toggle="modal"
-                            data-whatever="{{ asset.id }}"
-                            data-field-id="#id_asset"
-                        >
-                            Постоянное объявление
-                        </a>
-                    </td>
+                    <th scope="col">№</th>
+                    <th scope="col">Наименование</th>
+                    <th scope="col">Балансодержатель</th>
+                    <th scope="col">Срок</th>
+                    <th scope="col"></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for asset in assets_qs %}
+                    <tr>
+                        <td>{{ asset.id }}</td>
+                        <td>
+                            <a href="{{ asset.get_absolute_url }}">{{ asset.name }}</a><br>
+                            <small class="text-muted">
+                                {% if asset.is_usable %}
+                                    <span class="text-success">
+                                        <i class="far fa-thumbs-up"></i>
+                                    </span>
+                                    {{ asset.get_state_display|default:'-'}}
+                                {% elif asset.is_usable_with_repair %}
+                                    <span class="text-warning">
+                                        <i class="fas fa-hammer"></i>
+                                    </span>
+                                    {{ asset.get_state_display|default:'-'}}
+                                {% elif asset.is_unusable %}
+                                    <span class="text-danger">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                    {{ asset.get_state_display|default:'-'}}
+                                {% else %}
+                                    {{ asset.get_state_display|default:'-'}}
+                                {% endif %}
+                            </small>
+                            <br>
+                            <small class="text-muted">
+                                {% if asset.address %}
+                                    {{ asset.address }}
+                                {% else %}
+                                    {{ asset.get_type_asset_display }}
+                                {% endif %}
+                            </small>
+                        </td>
+                        <td>{{ asset.balance_holder }}</td>
+                        <td>{{ asset.expiration_date|default:'-'}}</td>
+                        <td>
+                            <div class="text-nowrap">
+                                <a
+                                    class="btn btn-light"
+                                    href="#id_form_modal_const"
+                                    data-toggle="modal"
+                                    data-whatever="{{ asset.id }}"
+                                    data-field-id="#id_asset"
+                                    title="Сделать постоянным"
+                                >
+                                    <i class="fas fa-thumbtack"></i>
+                                </a>
+                                <a
+                                    class="btn btn-light"
+                                    href="#id_form_modal_archive"
+                                    data-toggle="modal"
+                                    data-whatever="{{ asset.id }}"
+                                    data-field-id="#id_asset"
+                                    title="Архивировать"
+                                >
+                                    <i class="fas fa-archive"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <div class="modal fade ModalValue" id="id_form_modal_archive">
         <div class="modal-dialog">
@@ -64,7 +115,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Вы уверены, что хотите архивировать это имущество</p>
+                    <p>Вы уверены, что хотите архивировать это объявление?</p>
                 </div>
                 <div class="modal-footer">
                     <form class="ModalForm" action="{% url 'assets:asset-archive' %}" method="POST">
@@ -88,7 +139,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Вы уверены, что хотите сделать постоянным это имущество</p>
+                    <p>Вы уверены, что хотите сделать постоянным это объявление?</p>
                 </div>
                 <div class="modal-footer">
                     <form class="ModalForm" action="{% url 'assets:asset-const' %}" method="POST">

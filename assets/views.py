@@ -9,8 +9,20 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
-from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
+from .forms import (
+    ImmovableAssetForm,
+    ImportXlsSelectFileForm,
+    MovableAssetForm,
+    ResolutionForm,
+)
+from .models import (
+    Asset,
+    AssetPhoto,
+    KindAsset,
+    Resolution,
+    XlsImport,
+    XlsImportColumnMatch,
+)
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -29,7 +41,14 @@ class AssetsListView(generic.View):
         if kind_asset == KindAsset.ARCHIVE.value:
             assets_qs = Asset.objects.archive_assets()
 
-        return render(request, self.mpr_template_name, context={"assets_qs": assets_qs})
+        return render(
+            request,
+            self.mpr_template_name,
+            context={
+                "assets_qs": assets_qs,
+                "kind_asset": kind_asset,
+            },
+        )
 
     def _get_user(self, request, kind_asset):
         assets_qs = None
@@ -42,7 +61,14 @@ class AssetsListView(generic.View):
         if kind_asset == KindAsset.CONST.value:
             assets_qs = Asset.objects.cost_assets()
 
-        return render(request, self.ogv_template_name, context={"assets_qs": assets_qs})
+        return render(
+            request,
+            self.ogv_template_name,
+            context={
+                "assets_qs": assets_qs,
+                "kind_asset": kind_asset,
+            },
+        )
 
     def get(self, request, kind_asset):
         if kind_asset not in KindAsset:

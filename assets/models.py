@@ -132,6 +132,18 @@ class Asset(models.Model):
     def is_immovable(self):
         return self.type_asset == self.TypeAsset.IMMOVABLE
 
+    @property
+    def is_usable(self):
+        return self.state == self.State.USABLE
+
+    @property
+    def is_usable_with_repair(self):
+        return self.state == self.State.USABLE_WITH_REPAIR
+
+    @property
+    def is_unusable(self):
+        return self.state == self.State.UNUSABLE
+
     @cached_property
     def coordinates(self):
         """

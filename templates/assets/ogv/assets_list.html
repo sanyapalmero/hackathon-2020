@@ -1,33 +1,72 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <a href="{% url 'assets:import-xls-select-file' %}" class="btn btn-secondary">Импорт Excel</a>
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a
+                class="nav-link {% if kind_asset == 'new' %}active{% endif %}"
+                href="{% url 'assets:assets-list' kind_asset='new' %}"
+            >Новые объявления</a>
+        </li>
+        <li class="nav-item">
+            <a
+                class="nav-link {% if kind_asset == 'const' %}active{% endif %}"
+                href="{% url 'assets:assets-list' kind_asset='const' %}"
+            >Постоянные объявления</a>
+        </li>
+    </ul>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Балансодержатель</th>
-                <th scope="col">Вид</th>
-                <th scope="col">Наименование</th>
-                <th scope="col">Адрес</th>
-                <th scope="col">Состояние</th>
-                <th scope="col">Срок рассмотрения</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for asset in assets_qs %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ asset.balance_holder }}</td>
-                    <td>{{ asset.get_type_asset_display }}</td>
-                    <td>{{ asset.name }}</td>
-                    <td>{{ asset.address|default:'-'}}</td>
-                    <td>{{ asset.get_state_display|default:'-'}}</td>
-                    <td>{{ asset.expiration_date|default:'-'}}</td>
+                    <th scope="col">№</th>
+                    <th scope="col">Наименование</th>
+                    <th scope="col">Балансодержатель</th>
+                    <th scope="col">Срок</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for asset in assets_qs %}
+                    <tr>
+                        <td>{{ asset.id }}</td>
+                        <td>
+                            <a href="{{ asset.get_absolute_url }}">{{ asset.name }}</a><br>
+                            <small class="text-muted">
+                                {% if asset.is_usable %}
+                                    <span class="text-success">
+                                        <i class="far fa-thumbs-up"></i>
+                                    </span>
+                                    {{ asset.get_state_display|default:'-'}}
+                                {% elif asset.is_usable_with_repair %}
+                                    <span class="text-warning">
+                                        <i class="fas fa-hammer"></i>
+                                    </span>
+                                    {{ asset.get_state_display|default:'-'}}
+                                {% elif asset.is_unusable %}
+                                    <span class="text-danger">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                    {{ asset.get_state_display|default:'-'}}
+                                {% else %}
+                                    {{ asset.get_state_display|default:'-'}}
+                                {% endif %}
+                            </small>
+                            <br>
+                            <small class="text-muted">
+                                {% if asset.address %}
+                                    {{ asset.address }}
+                                {% else %}
+                                    {{ asset.get_type_asset_display }}
+                                {% endif %}
+                            </small>
+                        </td>
+                        <td>{{ asset.balance_holder }}</td>
+                        <td>{{ asset.expiration_date|default:'-'}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}
