@@ -116,7 +116,7 @@ class Asset(models.Model):
     def get_absolute_url(self):
         return reverse("assets:asset-detail", kwargs={"pk": self.pk})
 
-    def as_dict(self):
+    def get_asset_info(self):
         asset_info = f"<div>Наименование: <b>{self.name}</b></div>"
         asset_info += f"<div>Адрес: {self.address}</div>"
         asset_info += f"<div>Состояние: {self.get_state_display()}</div>"
