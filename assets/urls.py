@@ -31,6 +31,11 @@ urlpatterns = [
         name="asset-update",
     ),
     path(
+        "asset-detail/<int:pk>/refused/",
+        views.RefusedAssetView.as_view(),
+        name="asset-refused",
+    ),
+    path(
         "import-xls/select-file/",
         views.ImportXlsSelectFileView.as_view(),
         name="import-xls-select-file",

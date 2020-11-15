@@ -10,7 +10,7 @@ from users.decorators import role_required
 from users.models import User
 
 from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm
-from .models import Asset, AssetPhoto, KindAsset, XlsImport, XlsImportColumnMatch
+from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -217,6 +217,17 @@ class AssetUpdateView(generic.View):
             return render(request, self.template_name, context={"form": form})
 
         asset = form.save()
+
+        return redirect(asset)
+
+
+@method_decorator(role_required(User.ROLE_USER), name="dispatch")
+class RefusedAssetView(generic.View):
+    def post(self, request, pk):
+        asset = Asset.objects.get(pk=pk)
+        resolution = Resolution(asset=asset, user=request.user)
+        resolution.kind = Resolution.Kind.REFUSED
+        resolution.save()
 
         return redirect(asset)
 
