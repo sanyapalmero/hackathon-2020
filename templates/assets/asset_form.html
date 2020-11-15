@@ -30,7 +30,12 @@
             {{ error }}
           {% endfor %}
         </div>
-        <input type="file" name="photos" multiple>
+        <div class="form-group">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile" name="photos" multiple>
+            <label class="custom-file-label" for="customFile">Выберите файл</label>
+          </div>
+        </div>
         <button class="btn btn-primary" type="submit">Сохранить</button>
       </form>
     </div>
@@ -52,7 +57,12 @@
             {% endif %}
           </div>
         {% endfor %}
-        <input type="file" name="photos" multiple>
+        <div class="form-group">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile" name="photos" multiple>
+            <label class="custom-file-label" for="customFile">Выберите файл</label>
+          </div>
+        </div>
         <button class="btn btn-primary" type="submit">Сохранить</button>
       </form>
     </div>
