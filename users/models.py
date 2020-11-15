@@ -1,5 +1,8 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.mail import send_mail
 from django.db import models
+from django.template.loader import render_to_string
 
 
 class UserManager(BaseUserManager):
@@ -55,6 +58,23 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_admin
+
+    def send_email(self, subject, templates_name, context):
+        message_txt = render_to_string(
+            templates_name + ".txt",
+            context,
+        )
+        message_html = render_to_string(
+            templates_name + ".html",
+            context,
+        )
+        send_mail(
+            subject=subject,
+            message=message_txt,
+            html_message=message_html,
+            from_email=settings.EMAIL_DEFAULT_FROM,
+            recipient_list=[self.email],
+        )
 
     class Meta:
         verbose_name = "Пользователь"

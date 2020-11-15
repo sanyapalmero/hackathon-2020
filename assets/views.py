@@ -12,21 +12,8 @@ from openpyxl import Workbook
 from users.decorators import role_required
 from users.models import User
 
-from .forms import (
-    ExportXlsForm,
-    ImmovableAssetForm,
-    ImportXlsSelectFileForm,
-    MovableAssetForm,
-    ResolutionForm,
-)
-from .models import (
-    Asset,
-    AssetPhoto,
-    KindAsset,
-    Resolution,
-    XlsImport,
-    XlsImportColumnMatch,
-)
+from .forms import ExportXlsForm, ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
+from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -227,6 +214,18 @@ class AssetCreateView(generic.View):
         photos = request.FILES.getlist("photos")
         for photo in photos:
             AssetPhoto.objects.create(asset=asset, photo=photo)
+
+        ogv_users = User.objects.filter(role=User.ROLE_USER)
+        for user in ogv_users:
+            user.send_email(
+                subject="Новое объявление",
+                templates_name="users/email/new-asset",
+                context={
+                    "id": asset.id,
+                    "name": asset.name,
+                    "link": self.request.META["HTTP_HOST"] + asset.get_absolute_url(),
+                },
+            )
 
         return redirect(asset)
 
