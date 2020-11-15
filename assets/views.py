@@ -1,6 +1,7 @@
 import json
 import string
 
+
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
@@ -67,12 +68,16 @@ class AssetsListView(generic.View):
         if kind_asset == KindAsset.CONST.value:
             assets_qs = Asset.objects.cost_assets()
 
+        assets_dicts_list = [asset.get_asset_info() for asset in assets_qs]
+        assets_json = json.dumps(assets_dicts_list, ensure_ascii=False)
+
         return render(
             request,
             self.ogv_template_name,
             context={
                 "assets_qs": assets_qs,
                 "kind_asset": kind_asset,
+                "assets_json": assets_json,
             },
         )
 
@@ -130,16 +135,11 @@ class ArchiveAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
 
-        if not asset_id:
-            return JsonResponse({"status": "error", "message": "asset_id is invalid"})
-
         asset = Asset.objects.get(pk=asset_id)
         asset.status = Asset.Status.ARCHIVED
         asset.save()
 
-        return JsonResponse(
-            {"status": "ok", "message": "asset #{} is archived".format(asset_id)}
-        )
+        return redirect(request.POST.get("back", "/"))
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
@@ -147,16 +147,11 @@ class ConstAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
 
-        if not asset_id:
-            return JsonResponse({"status": "error", "message": "asset_id is invalid"})
-
         asset = Asset.objects.get(pk=asset_id)
         asset.expiration_date = None
         asset.save()
 
-        return JsonResponse(
-            {"status": "ok", "message": "asset #{} is const".format(asset_id)}
-        )
+        return redirect(request.POST.get("back", "/"))
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
@@ -174,6 +169,7 @@ class AssetCreateView(generic.View):
                 request,
                 self.template_name,
                 context={
+                    "validation_called": True,
                     "movable_form": movable_form,
                     "immovable_form": immovable_form,
                 },
@@ -190,6 +186,8 @@ class AssetCreateView(generic.View):
                 request,
                 self.template_name,
                 context={
+                    "validation_called": True,
+                    "immovable_form_received": True,
                     "movable_form": movable_form,
                     "immovable_form": immovable_form,
                 },

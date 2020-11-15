@@ -7,6 +7,7 @@ import bsCustomFileInput from 'bs-custom-file-input'
 // Local
 import ModalValue from './components/ModalValue';
 import YandexMap from './components/YandexMap';
+import DemoFill from "./components/DemoFill";
 
 
 // Set value for modal window
@@ -20,4 +21,8 @@ $(function () {
 
 $('.YandexMap').each((index, htmlElement) => {
   new YandexMap(htmlElement);
+});
+
+$('.DemoFill').each((index, htmlElement) => {
+  new DemoFill(htmlElement);
 });

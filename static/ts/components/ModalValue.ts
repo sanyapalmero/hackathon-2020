@@ -1,9 +1,13 @@
+import $ from "jquery";
+
 export default class ModalValue {
     modal: JQuery<HTMLElement>;
 
     constructor(modal: JQuery<HTMLElement>) {
         this.modal = modal;
-        this.modal.on('show.bs.modal', (e) => {
+        let id = this.modal.attr('id');
+        let triggers = $(`[href="#${id}"], [data-toggle="#${id}"]`);
+        triggers.on('click', e => {
             let link = e.delegateTarget;
             if (!link) {
                 this.modal.hide();

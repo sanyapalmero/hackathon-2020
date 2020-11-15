@@ -1,0 +1,13 @@
+<label for="{{ movable_form.expiration_date.id_for_label }}">{{ movable_form.expiration_date.label }}</label>
+<input type="date" class="form-control {% spaceless %}
+  {% if validation_called %}
+    {% if field.errors %}is-invalid{% else %}is-valid{% endif %}
+  {% endif %}
+{% endspaceless %}"
+       name="{{ movable_form.expiration_date.html_name }}"
+       value="{{ movable_form.expiration_date.value|default:"" }}">
+<div class="invalid-feedback">
+  {% for error in field.errors %}
+    {{ error }}
+  {% endfor %}
+</div>

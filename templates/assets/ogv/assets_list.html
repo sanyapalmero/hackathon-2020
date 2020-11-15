@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <ul class="nav nav-tabs mb-3">
+    <ul class="nav nav-tabs nav-fill mb-3">
         <li class="nav-item">
             <a
                 class="nav-link {% if kind_asset == 'new' %}active{% endif %}"
@@ -15,6 +15,8 @@
             >Постоянные объявления</a>
         </li>
     </ul>
+
+    <div class="YandexMap mb-3 mw-100" data-assets="{{ assets_json }}"></div>
 
     <div class="table-responsive">
         <table class="table">
@@ -32,27 +34,29 @@
                         <td>{{ asset.id }}</td>
                         <td>
                             <a href="{{ asset.get_absolute_url }}">{{ asset.name }}</a><br>
-                            <small class="text-muted">
-                                {% if asset.is_usable %}
-                                    <span class="text-success">
-                                        <i class="far fa-thumbs-up"></i>
-                                    </span>
-                                    {{ asset.get_state_display|default:'-'}}
-                                {% elif asset.is_usable_with_repair %}
-                                    <span class="text-warning">
-                                        <i class="fas fa-hammer"></i>
-                                    </span>
-                                    {{ asset.get_state_display|default:'-'}}
-                                {% elif asset.is_unusable %}
-                                    <span class="text-danger">
-                                        <i class="fas fa-times"></i>
-                                    </span>
-                                    {{ asset.get_state_display|default:'-'}}
-                                {% else %}
-                                    {{ asset.get_state_display|default:'-'}}
-                                {% endif %}
-                            </small>
-                            <br>
+                            {% if asset.state %}
+                                <small class="text-muted">
+                                    {% if asset.is_usable %}
+                                        <span class="text-success">
+                                            <i class="far fa-thumbs-up"></i>
+                                        </span>
+                                        {{ asset.get_state_display|default:'-'}}
+                                    {% elif asset.is_usable_with_repair %}
+                                        <span class="text-warning">
+                                            <i class="fas fa-hammer"></i>
+                                        </span>
+                                        {{ asset.get_state_display|default:'-'}}
+                                    {% elif asset.is_unusable %}
+                                        <span class="text-danger">
+                                            <i class="fas fa-times"></i>
+                                        </span>
+                                        {{ asset.get_state_display|default:'-'}}
+                                    {% else %}
+                                        {{ asset.get_state_display|default:'-'}}
+                                    {% endif %}
+                                </small>
+                                <br>
+                            {% endif %}
                             <small class="text-muted">
                                 {% if asset.address %}
                                     {{ asset.address }}

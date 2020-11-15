@@ -4,6 +4,7 @@ import os
 
 import requests
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Q
 from django.urls import reverse
@@ -144,6 +145,14 @@ class Asset(models.Model):
         return self.status == self.Status.ACTIVE
 
     @property
+    def is_new(self):
+        return (
+            self.is_active
+            and self.expiration_date
+            and self.expiration_date >= timezone.now().date()
+        )
+
+    @property
     def is_archived(self):
         return self.status == self.Status.ARCHIVED
 
@@ -188,6 +197,10 @@ class Asset(models.Model):
         Если координаты не найдены, вернет None.
         https://yandex.ru/dev/maps/geocoder/doc/desc/concepts/input_params.html
         """
+        cache_key = f"coordinates[{self.address}]"
+        coordinates = cache.get(cache_key, default="missing")
+        if coordinates != "missing":
+            return coordinates
 
         url = "https://geocode-maps.yandex.ru/1.x/"
         data = {
@@ -224,9 +237,12 @@ class Asset(models.Model):
         if coordinates_list:
             splitted_coordinates = coordinates_list[0].split(" ")
             splitted_coordinates.reverse()
-            return " ".join(splitted_coordinates)
+            coordinates = " ".join(splitted_coordinates)
         else:
-            return None
+            coordinates = None
+
+        cache.set(cache_key, coordinates)
+        return coordinates
 
     class Meta:
         ordering = ("-created_at",)

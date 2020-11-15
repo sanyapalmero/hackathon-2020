@@ -37,7 +37,7 @@ export default class YandexMap {
             window.ymaps.ready().then(() => {
                 let map = new window.ymaps.Map(this.baseElement, {
                     center: [51.768011, 55.096929], // Координаты центра Оренбурга
-                    zoom: 11,
+                    zoom: 7,
                 });
                 let assetsList = JSON.parse(assets!) as Asset[];
                 for (let asset of assetsList) {

@@ -1,11 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="YandexMap" data-assets="{{ assets_json }}"></div>
-
-    <a href="{% url 'assets:import-xls-select-file' %}" class="btn btn-secondary">Импорт Excel</a>
-
-    <ul class="nav nav-tabs mb-3">
+    <ul class="nav nav-tabs nav-fill mb-3">
         <li class="nav-item">
             <a
                 class="nav-link {% if kind_asset == 'new' %}active{% endif %}"
@@ -32,6 +28,10 @@
         </li>
     </ul>
 
+    {% if kind_asset != 'archive' %}
+        <div class="YandexMap mb-3 mw-100" data-assets="{{ assets_json }}"></div>
+    {% endif %}
+
     <div class="mb-3">
         <a href="{% url 'assets:asset-create' %}" class="btn btn-primary">Добавить объявление</a>
         <a href="{% url 'assets:import-xls-select-file' %}" class="btn btn-secondary">Добавить из Excel</a>
@@ -55,27 +55,29 @@
                         <td>{{ asset.id }}</td>
                         <td>
                             <a href="{{ asset.get_absolute_url }}">{{ asset.name }}</a><br>
-                            <small class="text-muted">
-                                {% if asset.is_usable %}
-                                    <span class="text-success">
-                                        <i class="far fa-thumbs-up"></i>
-                                    </span>
-                                    {{ asset.get_state_display|default:'-'}}
-                                {% elif asset.is_usable_with_repair %}
-                                    <span class="text-warning">
-                                        <i class="fas fa-hammer"></i>
-                                    </span>
-                                    {{ asset.get_state_display|default:'-'}}
-                                {% elif asset.is_unusable %}
-                                    <span class="text-danger">
-                                        <i class="fas fa-times"></i>
-                                    </span>
-                                    {{ asset.get_state_display|default:'-'}}
-                                {% else %}
-                                    {{ asset.get_state_display|default:'-'}}
-                                {% endif %}
-                            </small>
-                            <br>
+                            {% if asset.state %}
+                                <small class="text-muted">
+                                    {% if asset.is_usable %}
+                                        <span class="text-success">
+                                            <i class="far fa-thumbs-up"></i>
+                                        </span>
+                                        {{ asset.get_state_display|default:'-'}}
+                                    {% elif asset.is_usable_with_repair %}
+                                        <span class="text-warning">
+                                            <i class="fas fa-hammer"></i>
+                                        </span>
+                                        {{ asset.get_state_display|default:'-'}}
+                                    {% elif asset.is_unusable %}
+                                        <span class="text-danger">
+                                            <i class="fas fa-times"></i>
+                                        </span>
+                                        {{ asset.get_state_display|default:'-'}}
+                                    {% else %}
+                                        {{ asset.get_state_display|default:'-'}}
+                                    {% endif %}
+                                </small>
+                                <br>
+                            {% endif %}
                             <small class="text-muted">
                                 {% if asset.address %}
                                     {{ asset.address }}
@@ -91,26 +93,30 @@
                         </td>
                         <td>
                             <div class="text-nowrap">
-                                <a
-                                    class="btn btn-light"
-                                    href="#id_form_modal_const"
-                                    data-toggle="modal"
-                                    data-whatever="{{ asset.id }}"
-                                    data-field-id="#id_asset"
-                                    title="Сделать постоянным"
-                                >
-                                    <i class="fas fa-thumbtack"></i>
-                                </a>
-                                <a
-                                    class="btn btn-light"
-                                    href="#id_form_modal_archive"
-                                    data-toggle="modal"
-                                    data-whatever="{{ asset.id }}"
-                                    data-field-id="#id_asset"
-                                    title="Архивировать"
-                                >
-                                    <i class="fas fa-archive"></i>
-                                </a>
+                                {% if asset.is_new %}
+                                    <a
+                                        class="btn btn-light"
+                                        href="#id_form_modal_const"
+                                        data-toggle="modal"
+                                        data-whatever="{{ asset.id }}"
+                                        data-field-id="#id_asset"
+                                        title="Сделать постоянным"
+                                    >
+                                        <i class="fas fa-thumbtack"></i>
+                                    </a>
+                                {% endif %}
+                                {% if asset.is_active %}
+                                    <a
+                                        class="btn btn-light"
+                                        href="#id_form_modal_archive"
+                                        data-toggle="modal"
+                                        data-whatever="{{ asset.id }}"
+                                        data-field-id="#id_asset"
+                                        title="Архивировать"
+                                    >
+                                        <i class="fas fa-archive"></i>
+                                    </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
@@ -135,6 +141,7 @@
                     <form class="ModalForm" action="{% url 'assets:asset-archive' %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="asset_id" id="id_asset">
+                        <input type="hidden" name="back" value="{{ request.path }}">
                         <button class="btn btn-danger" type="submit">Архивировать</button>
                     </form>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
@@ -159,6 +166,7 @@
                     <form class="ModalForm" action="{% url 'assets:asset-const' %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="asset_id" id="id_asset">
+                        <input type="hidden" name="back" value="{{ request.path }}">
                         <button class="btn btn-danger" type="submit">Да</button>
                     </form>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
