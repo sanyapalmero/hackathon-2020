@@ -39,6 +39,7 @@
                     <th scope="col">Наименование</th>
                     <th scope="col">Балансодержатель</th>
                     <th scope="col">Срок</th>
+                    <th scope="col">Количество согласий</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
@@ -79,6 +80,9 @@
                         </td>
                         <td>{{ asset.balance_holder }}</td>
                         <td>{{ asset.expiration_date|default:'-'}}</td>
+                        <td {% if asset.has_resolutions %}class="font-weight-bold"{% endif %}>
+                            {{ asset.resolutions_count }}
+                        </td>
                         <td>
                             <div class="text-nowrap">
                                 <a

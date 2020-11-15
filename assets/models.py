@@ -164,6 +164,10 @@ class Asset(models.Model):
         resolutions_count = Resolution.objects.filter(asset=self).count()
         return True if resolutions_count > 0 else False
 
+    @property
+    def resolutions_count(self):
+        return Resolution.objects.filter(asset=self).count()
+
     @cached_property
     def coordinates(self):
         """
