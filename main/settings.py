@@ -116,7 +116,7 @@ SHORT_LEN = 127  # max_length=127
 
 
 # Yandex maps API
-YANDEX_MAPS_API_KEY = os.getenv("YANDEX_MAPS_API_KEY", "")
+YANDEX_MAPS_API_KEY = "5dd602e3-c08a-4a44-b01c-d87eb87946f2"
 
 
 # Password validation
