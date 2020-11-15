@@ -112,7 +112,7 @@
   {% endif %}
 
   <div class="mt-5">
-    <h3>Таблица согласий</h3>
+    <h3>Решения о необходимости в имуществе</h3>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -127,6 +127,7 @@
         {% for resolution in approved_resolutions %}
           <tr {% if forloop.first %}class="table-success"{% endif %}>
             <td>{{ resolution.id }}</td>
+            <td>{{ resolution.user.username }}</td>
             <td>
               {{ resolution.future_balance_holder }}<br>
               {{ resolution.full_name_contact_person }}<br>
@@ -140,7 +141,7 @@
       </table>
     </div>
 
-    <h3>Таблица отказов</h3>
+    <h3>Отказы от имущества</h3>
     <div class="table-responsive">
       <table class="table">
         <thead>
