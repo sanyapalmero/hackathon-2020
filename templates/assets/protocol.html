@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Протокол</title>
+
+    <style>
+        :root {
+            font-family: serif;
+        }
+        dt {
+            font-weight: bold;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: left;
+            padding: 8px 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ asset.name }}</h1>
+    <dl>
+        <dt>Балансодержатель:</dt>
+        <dd>{{ asset.balance_holder }}</dd>
+
+        {% if asset.address %}
+            <dt>Адрес:</dt>
+            <dd>{{ asset.address }}</dd>
+        {% endif %}
+        {% if asset.square %}
+            <dt>Площадь:</dt>
+            <dd>{{ asset.square }} кв.м</dd>
+        {% endif %}
+        {% if asset.cadastral_number %}
+            <dt>Кадастровый номер:</dt>
+            <dd>{{ asset.cadastral_number }}</dd>
+        {% endif %}
+
+        <dt>Контактное лицо:</dt>
+        <dd>{{ asset.full_name_contact_person }}</dd>
+        {% if asset.phone_contact_person %}
+            <dd>тел.: {{ asset.phone_contact_person }}</dd>
+        {% endif %}
+        {% if asset.email_contact_person %}
+            <dd>email: {{ asset.email_contact_person }}</dd>
+        {% endif %}
+    </dl>
+
+    <h2>Органы гос. власти, принявшие решение о необходимости в имуществе</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Представитель</th>
+                <th>Будущий балансодержатель</th>
+                <th>Контактного лицо</th>
+                <th>Дата и время</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for resolution in asset.resolution_set.all.filter_approved %}
+                <tr>
+                    <td>{{ resolution.user.username }}</td>
+                    <td>{{ resolution.future_balance_holder }}</td>
+                    <td>
+                        {{ resolution.full_name_contact_person}}
+                        {% if resolution.phone_contact_person %}
+                            <br>тел.: {{ resolution.phone_contact_person }}
+                        {% endif %}
+                        {% if resolution.email_contact_person %}
+                            <br>email: {{ resolution.email_contact_person }}
+                        {% endif %}
+                    </td>
+                    <td>{{ resolution.created_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Органы гос. власти, отказавшиеся от имущества</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Представитель</th>
+                <th>Дата и время отказа</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for resolution in asset.resolution_set.all.filter_approved %}
+                <tr>
+                    <td>{{ resolution.user.username }}</td>
+                    <td>{{ resolution.created_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        window.print();
+    </script>
+</body>
+</html>

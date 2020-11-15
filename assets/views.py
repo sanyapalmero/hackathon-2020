@@ -269,6 +269,11 @@ class AssetUpdateView(generic.View):
         return redirect(asset)
 
 
+class AssetProtocolView(generic.DetailView):
+    template_name = "assets/protocol.html"
+    model = Asset
+
+
 @method_decorator(role_required(User.ROLE_USER), name="dispatch")
 class RefusedAssetView(generic.View):
     def post(self, request, pk):

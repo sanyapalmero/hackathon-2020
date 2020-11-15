@@ -31,6 +31,11 @@ urlpatterns = [
         name="asset-update",
     ),
     path(
+        "asset-detail/<int:pk>/protocol/",
+        views.AssetProtocolView.as_view(),
+        name="asset-protocol",
+    ),
+    path(
         "asset-detail/<int:pk>/refused/",
         views.RefusedAssetView.as_view(),
         name="asset-refused",

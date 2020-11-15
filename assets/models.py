@@ -276,6 +276,14 @@ class AssetPhoto(models.Model):
         )
 
 
+class ResolutionQuerySet(models.QuerySet):
+    def filter_approved(self):
+        return self.filter(kind=Resolution.Kind.APPROVED)
+
+    def filter_refused(self):
+        return self.filter(kind=Resolution.Kind.REFUSED)
+
+
 class Resolution(models.Model):
     """Решение о необходимости в имуществе"""
 
@@ -302,6 +310,8 @@ class Resolution(models.Model):
     email_contact_person = models.EmailField(
         max_length=settings.LEN, blank=True, verbose_name="Email контактного лица"
     )
+
+    objects = ResolutionQuerySet.as_manager()
 
     @property
     def is_approved(self):
