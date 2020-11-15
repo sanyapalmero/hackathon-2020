@@ -25,3 +25,4 @@ def upgrade(c):
     with c.cd("h2020"):
         c.run("docker-compose pull")
         c.run("docker-compose up -d")
+        c.run("docker-compose restart frontend")
