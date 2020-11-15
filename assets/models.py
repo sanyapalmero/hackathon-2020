@@ -139,7 +139,7 @@ class Asset(models.Model):
         asset_info += f"<div>Состояние: {self.get_state_display()}</div>"
         asset_info += f"<div>Комментарий к состоянию: {self.state_comment}</div>"
         asset_info += f"<div>Дата и время добавления: {created_at}</div>"
-        asset_info += f"<div>Ссылка: {self.get_absolute_url()}</div>"
+        asset_info += f"<div><a href='{self.get_absolute_url()}' target='_blank'>Подробнее</a></div>"
 
         return {
             "asset_info": asset_info,
