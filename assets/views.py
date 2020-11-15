@@ -20,7 +20,14 @@ from .forms import (
     MovableAssetForm,
     ResolutionForm,
 )
-from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
+from .models import (
+    Asset,
+    AssetPhoto,
+    KindAsset,
+    Resolution,
+    XlsImport,
+    XlsImportColumnMatch,
+)
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -363,7 +370,13 @@ class ApprovedAssetView(generic.View):
 
         if not form.is_valid():
             return render(
-                request, self.template_name, context={"form": form, "asset": asset}
+                request,
+                self.template_name,
+                context={
+                    "form": form,
+                    "asset": asset,
+                    "validation_called": True,
+                },
             )
 
         resolution = form.save(commit=False)

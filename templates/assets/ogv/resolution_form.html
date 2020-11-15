@@ -3,11 +3,20 @@
 {% block title %}Решение о необходимости в имуществе{% endblock %}
 
 {% block content %}
+<h1>Решение о необходимости в имуществе</h1>
+
+<h3 class="text-muted mb-4">
+    {{ asset.name }}
+</h3>
 
 <form class="" action="" method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить</button>
+    {% for field in form %}
+        <div class="form-group">
+            {% include "common/text-field.html" %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Отправить</button>
 </form>
 
 {% endblock %}
