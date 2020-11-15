@@ -12,16 +12,26 @@ from users.models import User
 
 class Command(BaseCommand):
     def add_photo(self, asset, name):
-        os.makedirs(os.path.join(settings.MEDIA_ROOT, "sample-images"), exist_ok=True)
-        source_image = os.path.join(settings.BASE_DIR, "static", "sample-images", name)
-        target_image = os.path.join(settings.MEDIA_ROOT, "sample-images", name)
-        shutil.copyfile(source_image, target_image)
-        relpath = os.path.join("sample-images", name)
+        if AssetPhoto.objects.filter(asset=asset, photo__contains=name).exists():
+            return
 
-        return AssetPhoto.objects.create(
-            asset=asset,
-            photo=relpath,
-        )
+        try:
+            os.makedirs(
+                os.path.join(settings.MEDIA_ROOT, "sample-images"), exist_ok=True
+            )
+            source_image = os.path.join(
+                settings.BASE_DIR, "static", "sample-images", name
+            )
+            target_image = os.path.join(settings.MEDIA_ROOT, "sample-images", name)
+            shutil.copyfile(source_image, target_image)
+            relpath = os.path.join("sample-images", name)
+
+            return AssetPhoto.objects.create(
+                asset=asset,
+                photo=relpath,
+            )
+        except Exception:
+            return
 
     def handle(self, *args, **options):
         if not User.objects.filter(email="admin@example.com").exists():
@@ -38,7 +48,8 @@ class Command(BaseCommand):
                 password="ogv",
             )
 
-        if not Asset.objects.filter(id=1).exists():
+        asset = Asset.objects.filter(id=1).first()
+        if not asset:
             asset = Asset.objects.create(
                 id=1,
                 balance_holder="ГБУСО «Комплексный центр социального обслуживания населения» в Шарлыкском районе",
@@ -52,10 +63,11 @@ class Command(BaseCommand):
                 state=Asset.State.USABLE_WITH_REPAIR,
                 state_comment="требует ремонта система отопления",
             )
-            self.add_photo(asset, "01.jpg")
-            self.add_photo(asset, "02.jpg")
+        self.add_photo(asset, "01.jpg")
+        self.add_photo(asset, "02.jpg")
 
-        if not Asset.objects.filter(id=2).exists():
+        asset = Asset.objects.filter(id=2).first()
+        if not asset:
             asset = Asset.objects.create(
                 id=2,
                 balance_holder="ГБУСО «Имангуловский специальный дом-интернат для престарелых и инвалидов»",
@@ -67,9 +79,10 @@ class Command(BaseCommand):
                 square=Decimal("105"),
                 state=Asset.State.USABLE,
             )
-            self.add_photo(asset, "03.jpeg")
+        self.add_photo(asset, "03.jpeg")
 
-        if not Asset.objects.filter(id=3).exists():
+        asset = Asset.objects.filter(id=3).first()
+        if not asset:
             asset = Asset.objects.create(
                 id=3,
                 balance_holder="ГБУСО «Мустаевский психоневрологический интернат»",
@@ -81,9 +94,10 @@ class Command(BaseCommand):
                 square=Decimal("320.9"),
                 state=Asset.State.UNUSABLE,
             )
-            self.add_photo(asset, "04.jpg")
+        self.add_photo(asset, "04.jpg")
 
-        if not Asset.objects.filter(id=4).exists():
+        asset = Asset.objects.filter(id=4).first()
+        if not asset:
             asset = Asset.objects.create(
                 id=4,
                 balance_holder="ГБУСО «Мустаевский психоневрологический интернат»",
@@ -92,11 +106,11 @@ class Command(BaseCommand):
                 full_name_contact_person="Иван Иванович Иванов",
                 email_contact_person="ivan@example.com",
             )
-            self.add_photo(asset, "05.jpg")
-            self.add_photo(asset, "06.jpg")
-            self.add_photo(asset, "07.jpg")
+        self.add_photo(asset, "05.jpg")
+        self.add_photo(asset, "07.jpg")
 
-        if not Asset.objects.filter(id=5).exists():
+        asset = Asset.objects.filter(id=5).first()
+        if not asset:
             asset = Asset.objects.create(
                 id=5,
                 balance_holder="ГБУСО «Сакмарский психоневрологический интернат»",
@@ -108,9 +122,10 @@ class Command(BaseCommand):
                 square=Decimal("47.1"),
                 state=Asset.State.UNUSABLE,
             )
-            self.add_photo(asset, "08.jpg")
+        self.add_photo(asset, "08.jpg")
 
-        if not Asset.objects.filter(id=6).exists():
+        asset = Asset.objects.filter(id=6).first()
+        if not asset:
             asset = Asset.objects.create(
                 id=6,
                 balance_holder="ГБУСО «Мустаевский психоневрологический интернат»",
@@ -120,11 +135,11 @@ class Command(BaseCommand):
                 email_contact_person="ivan@example.com",
                 expiration_date=date(2021, 2, 1),
             )
-            self.add_photo(asset, "05.jpg")
-            self.add_photo(asset, "06.jpg")
-            self.add_photo(asset, "07.jpg")
+        self.add_photo(asset, "05.jpg")
+        self.add_photo(asset, "07.jpg")
 
-        if not Asset.objects.filter(id=7).exists():
+        asset = Asset.objects.filter(id=7).first()
+        if not asset:
             asset = Asset.objects.create(
                 id=7,
                 balance_holder="ГБУСО «Сакмарский психоневрологический интернат»",
@@ -137,4 +152,4 @@ class Command(BaseCommand):
                 state=Asset.State.UNUSABLE,
                 expiration_date=date(2021, 2, 1),
             )
-            self.add_photo(asset, "08.jpg")
+        self.add_photo(asset, "08.jpg")
