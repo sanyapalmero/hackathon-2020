@@ -160,13 +160,17 @@ class Asset(models.Model):
         return self.state == self.State.UNUSABLE
 
     @property
-    def has_resolutions(self):
-        resolutions_count = Resolution.objects.filter(asset=self).count()
+    def has_approved_resolutions(self):
+        resolutions_count = Resolution.objects.filter(
+            asset=self, kind=Resolution.Kind.APPROVED
+        ).count()
         return True if resolutions_count > 0 else False
 
     @property
-    def resolutions_count(self):
-        return Resolution.objects.filter(asset=self).count()
+    def approved_resolutions_count(self):
+        return Resolution.objects.filter(
+            asset=self, kind=Resolution.Kind.APPROVED
+        ).count()
 
     @cached_property
     def coordinates(self):

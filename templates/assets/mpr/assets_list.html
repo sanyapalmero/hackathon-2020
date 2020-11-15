@@ -45,7 +45,7 @@
             </thead>
             <tbody>
                 {% for asset in assets_qs %}
-                    <tr {% if asset.has_resolutions %}class="table-success"{% endif %}>
+                    <tr {% if asset.has_approved_resolutions %}class="table-success"{% endif %}>
                         <td>{{ asset.id }}</td>
                         <td>
                             <a href="{{ asset.get_absolute_url }}">{{ asset.name }}</a><br>
@@ -80,8 +80,8 @@
                         </td>
                         <td>{{ asset.balance_holder }}</td>
                         <td>{{ asset.expiration_date|default:'-'}}</td>
-                        <td {% if asset.has_resolutions %}class="font-weight-bold"{% endif %}>
-                            {{ asset.resolutions_count }}
+                        <td {% if asset.has_approved_resolutions %}class="font-weight-bold"{% endif %}>
+                            {{ asset.approved_resolutions_count }}
                         </td>
                         <td>
                             <div class="text-nowrap">
