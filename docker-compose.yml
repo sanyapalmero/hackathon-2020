@@ -19,7 +19,7 @@ services:
       - POSTGRES_HOST=db
       - WORKERS=2
       - DEBUG=0
-      - ALLOWED_HOST=domain.name
+      - ALLOWED_HOST=domain.name,127.0.0.1
     volumes:
       - static:/app/staticroot:rw
       - ./media:/app/media:rw
