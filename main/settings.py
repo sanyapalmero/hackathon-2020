@@ -139,6 +139,19 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Email settings
+
+# Default backend: 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = "smtp.example.com"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "admin@example.com"
+EMAIL_HOST_PASSWORD = "12345"
+EMAIL_USE_SSL = True
+EMAIL_DEFAULT_FROM = "admin@example.com"
+SERVER_EMAIL = "admin@example.com"
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 

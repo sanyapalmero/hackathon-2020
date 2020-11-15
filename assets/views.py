@@ -277,6 +277,18 @@ class AssetCreateView(generic.View):
         for photo in photos:
             AssetPhoto.objects.create(asset=asset, photo=photo)
 
+        ogv_users = User.objects.filter(role=User.ROLE_USER)
+        for user in ogv_users:
+            user.send_email(
+                subject="Новое объявление",
+                templates_name="users/email/asset",
+                context={
+                    "id": asset.id,
+                    "name": asset.name,
+                    "link": self.request.META["HTTP_HOST"] + asset.get_absolute_url(),
+                },
+            )
+
         return redirect(asset)
 
 
@@ -359,6 +371,18 @@ class ApprovedAssetView(generic.View):
         resolution.asset = asset
         resolution.kind = Resolution.Kind.APPROVED
         resolution.save()
+
+        admin_users = User.objects.filter(role=User.ROLE_ADMIN)
+        for user in admin_users:
+            user.send_email(
+                subject="Новое согласие",
+                templates_name="users/email/asset",
+                context={
+                    "id": asset.id,
+                    "name": asset.name,
+                    "link": self.request.META["HTTP_HOST"] + asset.get_absolute_url(),
+                },
+            )
 
         return redirect(asset)
 
