@@ -8,6 +8,21 @@
 <div class="row justify-content-center">
     <div class="col-sm-6 col-md-4">
         <h1>Войти</h1>
+        <div class="text-center">
+            Заполнить для демо:
+            <button
+                type="button"
+                class="btn btn-link btn-sm DemoFill"
+                data-email="admin@example.com"
+                data-password="admin"
+            >Министерство природных ресурсов</button>
+            <button
+                type="button"
+                class="btn btn-link btn-sm DemoFill"
+                data-email="ogv@example.com"
+                data-password="ogv"
+            >Орган государственной власти</button>
+        </div>
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
@@ -22,21 +37,6 @@
                     <p class="text-danger">{{ error }}</p>
                 {% endfor %}
             </div>
-            <p>
-                Заполнить для демо:<br>
-                <button
-                    type="button"
-                    class="btn btn-secondary btn-sm DemoFill"
-                    data-email="admin@example.com"
-                    data-password="admin"
-                >МПР</button>
-                <button
-                    type="button"
-                    class="btn btn-secondary btn-sm DemoFill"
-                    data-email="ogv@example.com"
-                    data-password="ogv"
-                >ОГВ</button>
-            </p>
             <button class="btn btn-primary" type="submit">Войти</button>
         </form>
     </div>
