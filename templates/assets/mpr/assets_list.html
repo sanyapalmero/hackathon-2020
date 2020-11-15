@@ -22,7 +22,9 @@
         </li>
     </ul>
 
-    <div class="YandexMap mb-3 mw-100" data-assets="{{ assets_json }}"></div>
+    {% if kind_asset != 'archive' %}
+        <div class="YandexMap mb-3 mw-100" data-assets="{{ assets_json }}"></div>
+    {% endif %}
 
     <div class="mb-3">
         <a href="{% url 'assets:asset-create' %}" class="btn btn-primary">Добавить объявление</a>
