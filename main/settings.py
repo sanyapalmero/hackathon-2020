@@ -102,6 +102,13 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "h2020",
+    }
+}
+
 # Model fields settings
 
 LEN = 255  # max_length=255
