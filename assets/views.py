@@ -1,9 +1,7 @@
 import json
 import string
 
-from django.conf import settings
-from django.http import Http404, HttpResponse, JsonResponse
-
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import generic
@@ -11,20 +9,8 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import (
-    ImmovableAssetForm,
-    ImportXlsSelectFileForm,
-    MovableAssetForm,
-    ResolutionForm,
-)
-from .models import (
-    Asset,
-    AssetPhoto,
-    KindAsset,
-    Resolution,
-    XlsImport,
-    XlsImportColumnMatch,
-)
+from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
+from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -67,12 +53,16 @@ class AssetsListView(generic.View):
         if kind_asset == KindAsset.CONST.value:
             assets_qs = Asset.objects.cost_assets()
 
+        assets_dicts_list = [asset.get_asset_info() for asset in assets_qs]
+        assets_json = json.dumps(assets_dicts_list, ensure_ascii=False)
+
         return render(
             request,
             self.ogv_template_name,
             context={
                 "assets_qs": assets_qs,
                 "kind_asset": kind_asset,
+                "assets_json": assets_json,
             },
         )
 

@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="YandexMap" data-assets="{{ assets_json }}"></div>
-
     <ul class="nav nav-tabs nav-fill mb-3">
         <li class="nav-item">
             <a
@@ -23,6 +21,8 @@
             >Архив</a>
         </li>
     </ul>
+
+    <div class="YandexMap mb-3 mw-100" data-assets="{{ assets_json }}"></div>
 
     <div class="mb-3">
         <a href="{% url 'assets:asset-create' %}" class="btn btn-primary">Добавить объявление</a>
