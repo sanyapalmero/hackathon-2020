@@ -9,8 +9,20 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
-from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
+from .forms import (
+    ImmovableAssetForm,
+    ImportXlsSelectFileForm,
+    MovableAssetForm,
+    ResolutionForm,
+)
+from .models import (
+    Asset,
+    AssetPhoto,
+    KindAsset,
+    Resolution,
+    XlsImport,
+    XlsImportColumnMatch,
+)
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -94,6 +106,9 @@ class AssetDetailView(generic.DetailView):
 
         asset = Asset.objects.get(pk=pk)
         photos = AssetPhoto.objects.filter(asset=asset)
+        approved_resolutions = Resolution.objects.filter(
+            asset=asset, kind=Resolution.Kind.APPROVED
+        )
 
         return render(
             request,
@@ -101,6 +116,7 @@ class AssetDetailView(generic.DetailView):
             context={
                 "asset": asset,
                 "photos": photos,
+                "approved_resolutions": approved_resolutions,
             },
         )
 
