@@ -388,4 +388,4 @@ class ImportXlsPreviewView(generic.View):
         for asset in assets:
             asset.save()
 
-        return redirect("assets:import-xls-select-file")
+        return redirect("assets:mpr-assets-list", kind_asset="new")
