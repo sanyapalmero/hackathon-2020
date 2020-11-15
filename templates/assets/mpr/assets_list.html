@@ -44,7 +44,7 @@
             </thead>
             <tbody>
                 {% for asset in assets_qs %}
-                    <tr>
+                    <tr {% if asset.has_resolutions %}class="table-success"{% endif %}>
                         <td>{{ asset.id }}</td>
                         <td>
                             <a href="{{ asset.get_absolute_url }}">{{ asset.name }}</a><br>

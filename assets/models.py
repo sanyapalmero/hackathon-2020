@@ -159,6 +159,11 @@ class Asset(models.Model):
     def is_unusable(self):
         return self.state == self.State.UNUSABLE
 
+    @property
+    def has_resolutions(self):
+        resolutions_count = Resolution.objects.filter(asset=self).count()
+        return True if resolutions_count > 0 else False
+
     @cached_property
     def coordinates(self):
         """
