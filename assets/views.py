@@ -1,7 +1,8 @@
 import json
 import string
 
-from django.http import Http404, HttpResponse
+
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import generic
@@ -9,8 +10,20 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
-from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
+from .forms import (
+    ImmovableAssetForm,
+    ImportXlsSelectFileForm,
+    MovableAssetForm,
+    ResolutionForm,
+)
+from .models import (
+    Asset,
+    AssetPhoto,
+    KindAsset,
+    Resolution,
+    XlsImport,
+    XlsImportColumnMatch,
+)
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -28,6 +41,8 @@ class AssetsListView(generic.View):
             assets_qs = Asset.objects.cost_assets()
         if kind_asset == KindAsset.ARCHIVE.value:
             assets_qs = Asset.objects.archive_assets()
+        if kind_asset == KindAsset.WITH_APPLICANTS.value:
+            assets_qs = Asset.objects.with_applicants_assets()
 
         assets_dicts_list = [asset.get_asset_info() for asset in assets_qs]
         assets_json = json.dumps(assets_dicts_list, ensure_ascii=False)
@@ -96,6 +111,12 @@ class AssetDetailView(generic.DetailView):
 
         asset = Asset.objects.get(pk=pk)
         photos = AssetPhoto.objects.filter(asset=asset)
+        approved_resolutions = Resolution.objects.filter(
+            asset=asset, kind=Resolution.Kind.APPROVED
+        ).order_by("-created_at")
+        refused_resolutions = Resolution.objects.filter(
+            asset=asset, kind=Resolution.Kind.REFUSED
+        )
 
         return render(
             request,
@@ -103,6 +124,8 @@ class AssetDetailView(generic.DetailView):
             context={
                 "asset": asset,
                 "photos": photos,
+                "approved_resolutions": approved_resolutions,
+                "refused_resolutions": refused_resolutions,
             },
         )
 

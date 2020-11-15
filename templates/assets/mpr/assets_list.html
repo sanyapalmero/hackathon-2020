@@ -20,6 +20,12 @@
                 href="{% url 'assets:assets-list' kind_asset='archive' %}"
             >Архив</a>
         </li>
+        <li class="nav-item">
+            <a
+                class="nav-link {% if kind_asset == 'with_applicants' %}active{% endif %}"
+                href="{% url 'assets:assets-list' kind_asset='with_applicants' %}"
+            >Объявления с претендентами</a>
+        </li>
     </ul>
 
     {% if kind_asset != 'archive' %}
@@ -39,12 +45,13 @@
                     <th scope="col">Наименование</th>
                     <th scope="col">Балансодержатель</th>
                     <th scope="col">Срок</th>
+                    <th scope="col">Количество согласий</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for asset in assets_qs %}
-                    <tr>
+                    <tr {% if asset.has_approved_resolutions %}class="table-success"{% endif %}>
                         <td>{{ asset.id }}</td>
                         <td>
                             <a href="{{ asset.get_absolute_url }}">{{ asset.name }}</a><br>
@@ -81,6 +88,9 @@
                         </td>
                         <td>{{ asset.balance_holder }}</td>
                         <td>{{ asset.expiration_date|default:'-'}}</td>
+                        <td {% if asset.has_approved_resolutions %}class="font-weight-bold"{% endif %}>
+                            {{ asset.approved_resolutions_count }}
+                        </td>
                         <td>
                             <div class="text-nowrap">
                                 {% if asset.is_new %}
