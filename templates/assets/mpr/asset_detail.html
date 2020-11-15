@@ -66,27 +66,6 @@
           </tbody>
         </table>
       </div>
-      <div class="row">
-        <div class="col-12">
-          {% if asset.is_new %}
-            <form action="{% url 'assets:asset-archive' %}" class="mr-5 d-inline-block" method="post">
-              {% csrf_token %}
-              <input type="hidden" name="asset_id" value="{{ asset.id }}">
-              <input type="hidden" name="back" value="{{ request.path }}">
-              <button class="btn btn-primary" type="submit">Постоянное объявление</button>
-            </form>
-          {% endif %}
-          {% if not asset.is_archived %}
-            <form action="{% url 'assets:asset-archive' %}" class="mr-5 d-inline-block" method="post">
-              {% csrf_token %}
-              <input type="hidden" name="asset_id" value="{{ asset.id }}">
-              <input type="hidden" name="back" value="{{ request.path }}">
-              <button class="btn btn-primary" type="submit">Архивировать</button>
-            </form>
-          {% endif %}
-          <a href="{% url 'assets:asset-update' asset.id %}" class="btn btn-primary">Редактировать</a>
-        </div>
-      </div>
     </div>
     {% if photos %}
       <div class="col-lg-6 mt-5 mt-lg-0">
@@ -104,9 +83,29 @@
   </div>
   {% if asset.characteristic %}
     <div class="mt-5">
-      <p>{% lorem %}</p>
+      <p>{{ asset.characteristic }}</p>
     </div>
   {% endif %}
+
+  <div class="mt-5">
+    {% if asset.is_new %}
+      <form action="{% url 'assets:asset-archive' %}" class="d-inline-block" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="asset_id" value="{{ asset.id }}">
+        <input type="hidden" name="back" value="{{ request.path }}">
+        <button class="btn btn-primary" type="submit">Постоянное объявление</button>
+      </form>
+    {% endif %}
+    {% if not asset.is_archived %}
+      <form action="{% url 'assets:asset-archive' %}" class="d-inline-block" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="asset_id" value="{{ asset.id }}">
+        <input type="hidden" name="back" value="{{ request.path }}">
+        <button class="btn btn-primary" type="submit">Архивировать</button>
+      </form>
+    {% endif %}
+    <a href="{% url 'assets:asset-update' asset.id %}" class="btn btn-primary">Редактировать</a>
+  </div>
 
   {% if asset.is_immovable and asset.address %}
     <div class="YandexMap YandexMap__fillWidth mt-5" data-coordinates="{{ asset.coordinates }}"></div>
