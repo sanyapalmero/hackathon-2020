@@ -11,8 +11,20 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
-from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
+from .forms import (
+    ImmovableAssetForm,
+    ImportXlsSelectFileForm,
+    MovableAssetForm,
+    ResolutionForm,
+)
+from .models import (
+    Asset,
+    AssetPhoto,
+    KindAsset,
+    Resolution,
+    XlsImport,
+    XlsImportColumnMatch,
+)
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -110,16 +122,11 @@ class ArchiveAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
 
-        if not asset_id:
-            return JsonResponse({"status": "error", "message": "asset_id is invalid"})
-
         asset = Asset.objects.get(pk=asset_id)
         asset.status = Asset.Status.ARCHIVED
         asset.save()
 
-        return JsonResponse(
-            {"status": "ok", "message": "asset #{} is archived".format(asset_id)}
-        )
+        return redirect(request.POST.get("back", "/"))
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
@@ -127,16 +134,11 @@ class ConstAssetView(generic.View):
     def post(self, request):
         asset_id = request.POST.get("asset_id")
 
-        if not asset_id:
-            return JsonResponse({"status": "error", "message": "asset_id is invalid"})
-
         asset = Asset.objects.get(pk=asset_id)
         asset.expiration_date = None
         asset.save()
 
-        return JsonResponse(
-            {"status": "ok", "message": "asset #{} is const".format(asset_id)}
-        )
+        return redirect(request.POST.get("back", "/"))
 
 
 @method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")

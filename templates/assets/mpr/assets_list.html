@@ -79,26 +79,30 @@
                         <td>{{ asset.expiration_date|default:'-'}}</td>
                         <td>
                             <div class="text-nowrap">
-                                <a
-                                    class="btn btn-light"
-                                    href="#id_form_modal_const"
-                                    data-toggle="modal"
-                                    data-whatever="{{ asset.id }}"
-                                    data-field-id="#id_asset"
-                                    title="Сделать постоянным"
-                                >
-                                    <i class="fas fa-thumbtack"></i>
-                                </a>
-                                <a
-                                    class="btn btn-light"
-                                    href="#id_form_modal_archive"
-                                    data-toggle="modal"
-                                    data-whatever="{{ asset.id }}"
-                                    data-field-id="#id_asset"
-                                    title="Архивировать"
-                                >
-                                    <i class="fas fa-archive"></i>
-                                </a>
+                                {% if asset.is_new %}
+                                    <a
+                                        class="btn btn-light"
+                                        href="#id_form_modal_const"
+                                        data-toggle="modal"
+                                        data-whatever="{{ asset.id }}"
+                                        data-field-id="#id_asset"
+                                        title="Сделать постоянным"
+                                    >
+                                        <i class="fas fa-thumbtack"></i>
+                                    </a>
+                                {% endif %}
+                                {% if asset.is_active %}
+                                    <a
+                                        class="btn btn-light"
+                                        href="#id_form_modal_archive"
+                                        data-toggle="modal"
+                                        data-whatever="{{ asset.id }}"
+                                        data-field-id="#id_asset"
+                                        title="Архивировать"
+                                    >
+                                        <i class="fas fa-archive"></i>
+                                    </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
@@ -123,6 +127,7 @@
                     <form class="ModalForm" action="{% url 'assets:asset-archive' %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="asset_id" id="id_asset">
+                        <input type="hidden" name="back" value="{{ request.path }}">
                         <button class="btn btn-danger" type="submit">Архивировать</button>
                     </form>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
@@ -147,6 +152,7 @@
                     <form class="ModalForm" action="{% url 'assets:asset-const' %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="asset_id" id="id_asset">
+                        <input type="hidden" name="back" value="{{ request.path }}">
                         <button class="btn btn-danger" type="submit">Да</button>
                     </form>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
