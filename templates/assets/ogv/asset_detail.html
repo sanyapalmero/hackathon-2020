@@ -83,7 +83,11 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <a href="#" class="btn btn-primary">Согласиться на передачу</a>
+                <a
+                    href="{% url 'assets:asset-approved' pk=asset.pk %}"
+                >
+                    Согласиться на передачу
+                </a>
             </div>
             <div class="col">
                 <a

@@ -9,7 +9,7 @@ from django.views import generic
 from users.decorators import role_required
 from users.models import User
 
-from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm
+from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
 from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
@@ -227,6 +227,35 @@ class RefusedAssetView(generic.View):
         asset = Asset.objects.get(pk=pk)
         resolution = Resolution(asset=asset, user=request.user)
         resolution.kind = Resolution.Kind.REFUSED
+        resolution.save()
+
+        return redirect(asset)
+
+
+class ApprovedAssetView(generic.View):
+    template_name = "assets/ogv/resolution_form.html"
+    form_class = ResolutionForm
+
+    def get(self, request, pk):
+        form = self.form_class()
+        asset = Asset.objects.get(pk=pk)
+        return render(
+            request, self.template_name, context={"form": form, "asset": asset}
+        )
+
+    def post(self, request, pk):
+        asset = Asset.objects.get(pk=pk)
+        form = self.form_class(request.POST)
+
+        if not form.is_valid():
+            return render(
+                request, self.template_name, context={"form": form, "asset": asset}
+            )
+
+        resolution = form.save(commit=False)
+        resolution.user = request.user
+        resolution.asset = asset
+        resolution.kind = Resolution.Kind.APPROVED
         resolution.save()
 
         return redirect(asset)

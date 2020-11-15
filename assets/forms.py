@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Asset
+from .models import Asset, Resolution
 from .services.xlsimport import XlsAssetsFile, XlsImportError
 
 
@@ -40,6 +40,17 @@ class ImmovableAssetForm(forms.ModelForm):
             "state",
             "cadastral_number",
             "state_comment",
+        )
+
+
+class ResolutionForm(forms.ModelForm):
+    class Meta:
+        model = Resolution
+        fields = (
+            "future_balance_holder",
+            "full_name_contact_person",
+            "phone_contact_person",
+            "email_contact_person",
         )
 
 
