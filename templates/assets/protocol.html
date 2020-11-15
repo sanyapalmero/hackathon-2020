@@ -90,7 +90,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for resolution in asset.resolution_set.all.filter_approved %}
+            {% for resolution in asset.resolution_set.all.filter_refused %}
                 <tr>
                     <td>{{ resolution.user.username }}</td>
                     <td>{{ resolution.created_at }}</td>
