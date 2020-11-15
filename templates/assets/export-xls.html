@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Сохранить в Excel</h1>
+
+    <form action="{% url 'assets:export-xls' %}" method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <select name="{{ field.html_name }}" class="custom-select {% spaceless %}
+            {% if validation_called %}
+                {% if field.errors %}is-invalid{% else %}is-valid{% endif %}
+            {% endif %}
+            {% endspaceless %}">
+            {% for value, text in field.field.choices %}
+                <option value="{{ value }}">{{ text }}</option>
+            {% endfor %}
+            </select>
+            <div class="invalid-feedback">
+            {% for error in field.errors %}
+                {{ error }}
+            {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+{% endblock %}

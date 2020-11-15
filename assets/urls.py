@@ -55,4 +55,9 @@ urlpatterns = [
         views.ImportXlsPreviewView.as_view(),
         name="import-xls-preview",
     ),
+    path(
+        "export-xls/",
+        views.ExportXlsView.as_view(),
+        name="export-xls",
+    ),
 ]

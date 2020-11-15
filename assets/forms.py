@@ -1,4 +1,5 @@
 from django import forms
+from django.db import models
 
 from .models import Asset, Resolution
 from .services.xlsimport import XlsAssetsFile, XlsImportError
@@ -68,3 +69,23 @@ class ImportXlsSelectFileForm(forms.Form):
             raise forms.ValidationError(str(e))
 
         return file
+
+
+class ExportXlsForm(forms.Form):
+    class Kind(models.TextChoices):
+        ALL = "all", "Все"
+        NEW = "new", "Новые"
+        CONST = "const", "Постоянные"
+        ARCHIVED = "archived", "Архивные"
+
+    class ResolutionStatus(models.TextChoices):
+        ALL = "all", "Все"
+        WITH_PRETENDENTS = "with_p", "С претендентами"
+        WITHOUT_PRETENDENTS = "without_p", "Без претендентов"
+
+    kind = forms.ChoiceField(choices=Kind.choices, initial="all", label="Вид")
+    resolution_status = forms.ChoiceField(
+        choices=ResolutionStatus.choices,
+        initial="all",
+        label="Наличие претендентов",
+    )

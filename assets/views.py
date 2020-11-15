@@ -1,16 +1,32 @@
 import json
 import string
+from tempfile import NamedTemporaryFile
 
-from django.http import Http404, HttpResponse, JsonResponse
+from django.db import models
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import generic
+from openpyxl import Workbook
 
 from users.decorators import role_required
 from users.models import User
 
-from .forms import ImmovableAssetForm, ImportXlsSelectFileForm, MovableAssetForm, ResolutionForm
-from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
+from .forms import (
+    ExportXlsForm,
+    ImmovableAssetForm,
+    ImportXlsSelectFileForm,
+    MovableAssetForm,
+    ResolutionForm,
+)
+from .models import (
+    Asset,
+    AssetPhoto,
+    KindAsset,
+    Resolution,
+    XlsImport,
+    XlsImportColumnMatch,
+)
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -421,3 +437,81 @@ class ImportXlsPreviewView(generic.View):
             asset.save()
 
         return redirect("assets:assets-list", kind_asset="new")
+
+
+class ExportXlsView(generic.FormView):
+    form_class = ExportXlsForm
+    template_name = "assets/export-xls.html"
+
+    def make_workbook(self, assets):
+        wb = Workbook()
+        sheet = wb.active
+        sheet.title = "Объявления"
+
+        sheet.cell(row=1, column=1, value="№")
+        sheet.cell(row=1, column=2, value="Балансодержатель")
+        sheet.cell(row=1, column=3, value="Название")
+        sheet.cell(row=1, column=4, value="Вид")
+        sheet.cell(row=1, column=5, value="Адрес")
+        sheet.cell(row=1, column=6, value="Площадь")
+        sheet.cell(row=1, column=7, value="Кадастровый номер")
+        sheet.cell(row=1, column=8, value="Состояние")
+        sheet.cell(row=1, column=9, value="ФИО контактного лица")
+        sheet.cell(row=1, column=10, value="Телефон контактного лица")
+        sheet.cell(row=1, column=11, value="Email контактного лица")
+
+        for i in range(11):
+            sheet.cell(row=2, column=i + 1, value=str(i + 1))
+
+        for asset_ix, asset in enumerate(assets):
+            sheet.cell(row=asset_ix + 3, column=1, value=asset_ix + 1)
+            sheet.cell(row=asset_ix + 3, column=2, value=asset.balance_holder)
+            sheet.cell(row=asset_ix + 3, column=3, value=asset.name)
+            sheet.cell(row=asset_ix + 3, column=4, value=asset.get_type_asset_display())
+            sheet.cell(row=asset_ix + 3, column=5, value=asset.address)
+            sheet.cell(row=asset_ix + 3, column=6, value=asset.square)
+            sheet.cell(row=asset_ix + 3, column=7, value=asset.cadastral_number)
+            sheet.cell(row=asset_ix + 3, column=8, value=asset.get_state_display())
+            sheet.cell(row=asset_ix + 3, column=9, value=asset.full_name_contact_person)
+            sheet.cell(row=asset_ix + 3, column=10, value=asset.phone_contact_person)
+            sheet.cell(row=asset_ix + 3, column=11, value=asset.email_contact_person)
+
+        with NamedTemporaryFile() as tmp:
+            wb.save(tmp.name)
+            tmp.seek(0)
+            return tmp.read()
+
+    def form_valid(self, form):
+        assets = Asset.objects.all()
+
+        if form.cleaned_data["kind"] == ExportXlsForm.Kind.NEW:
+            assets = assets.new_assets()
+        elif form.cleaned_data["kind"] == ExportXlsForm.Kind.CONST:
+            assets = assets.cost_assets()
+        elif form.cleaned_data["kind"] == ExportXlsForm.Kind.ARCHIVED:
+            assets = assets.archive_assets()
+
+        assets = assets.annotate(
+            resolution_count=models.Count(
+                "resolution", filter=models.Q(resolution__kind=Resolution.Kind.APPROVED)
+            )
+        )
+
+        if (
+            form.cleaned_data["resolution_status"]
+            == ExportXlsForm.ResolutionStatus.WITH_PRETENDENTS
+        ):
+            assets = assets.filter(resolution_count__gt=0)
+        elif (
+            form.cleaned_data["resolution_status"]
+            == ExportXlsForm.ResolutionStatus.WITHOUT_PRETENDENTS
+        ):
+            assets = assets.filter(resolution_count=0)
+
+        xls_bytes = self.make_workbook(assets)
+        response = HttpResponse(
+            xls_bytes,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = "attachment; filename=assets.xlsx"
+        return response
