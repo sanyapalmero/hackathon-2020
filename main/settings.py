@@ -53,9 +53,7 @@ INSTALLED_APPS = [
 # Auth settings
 
 AUTH_USER_MODEL = "users.User"
-LOGIN_REDIRECT_URL = reverse_lazy(
-    "assets:mpr-assets-list", kwargs={"kind_asset": "new"}
-)
+LOGIN_REDIRECT_URL = reverse_lazy("assets:assets-list", kwargs={"kind_asset": "new"})
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
