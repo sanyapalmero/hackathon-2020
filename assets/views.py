@@ -108,7 +108,7 @@ class AssetDetailView(generic.DetailView):
         photos = AssetPhoto.objects.filter(asset=asset)
         approved_resolutions = Resolution.objects.filter(
             asset=asset, kind=Resolution.Kind.APPROVED
-        )
+        ).order_by("-created_at")
         refused_resolutions = Resolution.objects.filter(
             asset=asset, kind=Resolution.Kind.REFUSED
         )
