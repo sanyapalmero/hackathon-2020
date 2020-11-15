@@ -11,7 +11,7 @@ from .forms import CustomLoginForm
 
 class HomeView(generic.RedirectView):
     def get_redirect_url(self):
-        return reverse("assets:mpr-assets-list", kwargs={"kind_asset": KindAsset.NEW})
+        return reverse("assets:assets-list", kwargs={"kind_asset": KindAsset.NEW})
 
 
 class CustomLoginView(generic.View):
@@ -28,7 +28,7 @@ class CustomLoginView(generic.View):
             if settings.LOGIN_REDIRECT_URL:
                 return redirect(settings.LOGIN_REDIRECT_URL)
             else:
-                return redirect("assets:mpr-assets-list", kind_asset=KindAsset.NEW)
+                return redirect("assets:assets-list", kind_asset=KindAsset.NEW)
         else:
             return render(request, self.template_name, {"form": form})
 

@@ -67,7 +67,7 @@
                     <p>Вы уверены, что хотите архивировать это имущество</p>
                 </div>
                 <div class="modal-footer">
-                    <form class="ModalForm" action="{% url 'assets:mpr-asset-archive' %}" method="POST">
+                    <form class="ModalForm" action="{% url 'assets:asset-archive' %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="asset_id" id="id_asset">
                         <button class="btn btn-danger" type="submit">Архивировать</button>
@@ -91,7 +91,7 @@
                     <p>Вы уверены, что хотите сделать постоянным это имущество</p>
                 </div>
                 <div class="modal-footer">
-                    <form class="ModalForm" action="{% url 'assets:mpr-asset-const' %}" method="POST">
+                    <form class="ModalForm" action="{% url 'assets:asset-const' %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="asset_id" id="id_asset">
                         <button class="btn btn-danger" type="submit">Да</button>

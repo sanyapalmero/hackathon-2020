@@ -1,7 +1,7 @@
 import string
 
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import generic
@@ -14,11 +14,14 @@ from .models import Asset, AssetPhoto, KindAsset, XlsImport, XlsImportColumnMatc
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
-@method_decorator(role_required(User.ROLE_ADMIN), name="dispatch")
+@method_decorator(role_required(User.ROLE_ADMIN, User.ROLE_USER), name="dispatch")
 class AssetsListView(generic.View):
-    template_name = "assets/mpr/assets_list.html"
+    mpr_template_name = "assets/mpr/assets_list.html"
+    ogv_template_name = "assets/ogv/assets_list.html"
 
-    def get(self, request, kind_asset):
+    def _get_admin(self, request, kind_asset):
+        assets_qs = None
+
         if kind_asset == KindAsset.NEW.value:
             assets_qs = Asset.objects.new_assets()
         if kind_asset == KindAsset.CONST.value:
@@ -26,7 +29,33 @@ class AssetsListView(generic.View):
         if kind_asset == KindAsset.ARCHIVE.value:
             assets_qs = Asset.objects.archive_assets()
 
-        return render(request, self.template_name, context={"assets_qs": assets_qs})
+        return render(request, self.mpr_template_name, context={"assets_qs": assets_qs})
+
+    def _get_user(self, request, kind_asset):
+        assets_qs = None
+
+        if kind_asset == KindAsset.ARCHIVE.value:
+            raise Http404()
+
+        if kind_asset == KindAsset.NEW.value:
+            assets_qs = Asset.objects.new_assets()
+        if kind_asset == KindAsset.CONST.value:
+            assets_qs = Asset.objects.cost_assets()
+
+        return render(request, self.ogv_template_name, context={"assets_qs": assets_qs})
+
+    def get(self, request, kind_asset):
+        if kind_asset not in KindAsset:
+            raise Http404()
+
+        user = request.user
+
+        if user.is_admin:
+            return self._get_admin(request, kind_asset)
+        elif user.is_user:
+            return self._get_user(request, kind_asset)
+        else:
+            raise Http404()
 
 
 @method_decorator(role_required(User.ROLE_ADMIN, User.ROLE_USER), name="dispatch")

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{% url 'assets:import-xls-select-file' %}" class="btn btn-secondary">Импорт Excel</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Балансодержатель</th>
+                <th scope="col">Вид</th>
+                <th scope="col">Наименование</th>
+                <th scope="col">Адрес</th>
+                <th scope="col">Состояние</th>
+                <th scope="col">Срок рассмотрения</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets_qs %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ asset.balance_holder }}</td>
+                    <td>{{ asset.get_type_asset_display }}</td>
+                    <td>{{ asset.name }}</td>
+                    <td>{{ asset.address|default:'-'}}</td>
+                    <td>{{ asset.get_state_display|default:'-'}}</td>
+                    <td>{{ asset.expiration_date|default:'-'}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
