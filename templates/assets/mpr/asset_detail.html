@@ -82,14 +82,28 @@
 
     <div class="container">
         <div class="row">
+            {% if asset.is_new %}
+                <div class="col">
+                    <form action="{% url 'assets:asset-archive' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="asset_id" value="{{ asset.id }}">
+                        <input type="hidden" name="back" value="{{ request.path }}">
+                        <button class="btn btn-primary" type="submit">Постоянное объявление</button>
+                    </form>
+                </div>
+            {% endif %}
+            {% if not asset.is_archived %}
+                <div class="col">
+                    <form action="{% url 'assets:asset-archive' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="asset_id" value="{{ asset.id }}">
+                        <input type="hidden" name="back" value="{{ request.path }}">
+                        <button class="btn btn-primary" type="submit">Архивировать</button>
+                    </form>
+                </div>
+            {% endif %}
             <div class="col">
-                <a href="#" class="btn btn-primary">Постоянное объявление</a>
-            </div>
-            <div class="col">
-                <a href="#" class="btn btn-primary">Архивировать</a>
-            </div>
-            <div class="col">
-                <a href="#" class="btn btn-primary">Редактировать</a>
+                <a href="{% url 'assets:asset-update' asset.id %}" class="btn btn-primary">Редактировать</a>
             </div>
         </div>
     </div>
