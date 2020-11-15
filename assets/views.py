@@ -378,11 +378,12 @@ class AssetUpdateView(generic.View):
             )
 
         photos_qs = AssetPhoto.objects.filter(asset=asset)
-        if photos_qs:
+        new_photos = request.FILES.getlist("photos")
+
+        if photos_qs and new_photos:
             photos_qs.delete()
 
-        photos = request.FILES.getlist("photos")
-        for photo in photos:
+        for photo in new_photos:
             AssetPhoto.objects.create(asset=asset, photo=photo)
 
         asset = form.save()
