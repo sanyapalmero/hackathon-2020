@@ -1,5 +1,6 @@
 import os
 import shutil
+from datetime import date
 from decimal import Decimal
 
 from django.conf import settings
@@ -106,5 +107,34 @@ class Command(BaseCommand):
                 email_contact_person="ivan@example.com",
                 square=Decimal("47.1"),
                 state=Asset.State.UNUSABLE,
+            )
+            self.add_photo(asset, "08.jpg")
+
+        if not Asset.objects.filter(id=6).exists():
+            asset = Asset.objects.create(
+                id=6,
+                balance_holder="ГБУСО «Мустаевский психоневрологический интернат»",
+                name="Автомобиль LADA 211440",
+                type_asset=Asset.TypeAsset.MOVABLE,
+                full_name_contact_person="Иван Иванович Иванов",
+                email_contact_person="ivan@example.com",
+                expiration_date=date(2021, 2, 1),
+            )
+            self.add_photo(asset, "05.jpg")
+            self.add_photo(asset, "06.jpg")
+            self.add_photo(asset, "07.jpg")
+
+        if not Asset.objects.filter(id=7).exists():
+            asset = Asset.objects.create(
+                id=7,
+                balance_holder="ГБУСО «Сакмарский психоневрологический интернат»",
+                name="Здание зерносклада",
+                type_asset=Asset.TypeAsset.IMMOVABLE,
+                address="Оренбургская обл., Сакмарский р-н, с. Никольское, ул. Спортивная, 3",
+                full_name_contact_person="Иван Иванович Иванов",
+                email_contact_person="ivan@example.com",
+                square=Decimal("47.1"),
+                state=Asset.State.UNUSABLE,
+                expiration_date=date(2021, 2, 1),
             )
             self.add_photo(asset, "08.jpg")
