@@ -1,11 +1,13 @@
+{% load l10n %}
 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-<textarea class="form-control {% spaceless %}
+<input class="form-control {% spaceless %}
   {% if validation_called %}
     {% if field.errors %}is-invalid{% else %}is-valid{% endif %}
   {% endif %}
-{% endspaceless %}" name="{{ field.html_name }}" cols="30" rows="10">{% spaceless %}
-  {{ field.value|default:"" }}
-{% endspaceless %}</textarea>
+{% endspaceless %}"
+       type="number"
+       name="{{ field.html_name }}"
+       value="{{ field.value|unlocalize|default:0 }}">
 <div class="invalid-feedback">
   {% for error in field.errors %}
     {{ error }}

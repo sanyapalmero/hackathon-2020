@@ -20,14 +20,7 @@ from .forms import (
     MovableAssetForm,
     ResolutionForm,
 )
-from .models import (
-    Asset,
-    AssetPhoto,
-    KindAsset,
-    Resolution,
-    XlsImport,
-    XlsImportColumnMatch,
-)
+from .models import Asset, AssetPhoto, KindAsset, Resolution, XlsImport, XlsImportColumnMatch
 from .services.xlsimport import XlsAssetsFile, list_importable_attributes
 
 
@@ -329,7 +322,9 @@ class AssetUpdateView(generic.View):
 
         if not form.is_valid():
             return render(
-                request, self.template_name, context={"form": form, "asset": asset}
+                request,
+                self.template_name,
+                context={"form": form, "asset": asset, "validation_called": True},
             )
 
         photos_qs = AssetPhoto.objects.filter(asset=asset)

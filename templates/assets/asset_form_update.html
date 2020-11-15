@@ -11,11 +11,15 @@
         {% for field in form %}
           <div class="form-group">
             {% if field.html_name == "characteristic" %}
-              {% include "common/textarea-field.html" with form=movable_form %}
+              {% include "common/textarea-field.html" with form=form %}
             {% elif field.html_name == "expiration_date" %}
               {% include "common/date-field.html" with clear_button=True help_text="Если даты нет, объявление постоянное." %}
             {% else %}
-              {% include "common/text-field.html" %}
+              {% if field.field.widget.input_type == "number" %}
+                {% include "common/number-field.html" %}
+              {% else %}
+                {% include "common/text-field.html" %}
+              {% endif %}
             {% endif %}
           </div>
         {% endfor %}
@@ -51,7 +55,11 @@
             {% elif field.html_name == "state" %}
               {% include "common/select-field.html" with default_value="Выберите состояние" %}
             {% else %}
-              {% include "common/text-field.html" %}
+              {% if field.field.widget.input_type == "number" %}
+                {% include "common/number-field.html" %}
+              {% else %}
+                {% include "common/text-field.html" %}
+              {% endif %}
             {% endif %}
           </div>
         {% endfor %}
